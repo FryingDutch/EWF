@@ -9,5 +9,4 @@ using namespace EWF;
 int main()
 {
 	SceneManager::runGame();
-
 }

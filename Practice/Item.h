@@ -19,5 +19,10 @@ namespace EWF
 	public:
 		Item(std::string _ID, bool _oneUse) :
 			Entity(_ID), oneUse(_oneUse){}
+
+		void wear()
+		{
+
+		}
 	};
 }

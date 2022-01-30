@@ -63,7 +63,7 @@ namespace EWF
 
 	bool FileParser::isFileLinkFlag(size_t _index)
 	{
-		if (!read && fileContent[_index] == '#' && (_index + 1) < fileContent.size())
+		if (!read && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]))
 			return true;
 
 		return false;
@@ -100,7 +100,7 @@ namespace EWF
 		else if (isFileLinkFlag(_index))
 		{
 			std::string link;
-			for (_index = _index + 2; _index + 1 <= fileContent.size(); _index++)
+			for (_index = _index + 3; _index + 1 <= fileContent.size(); _index++)
 			{
 				if (fileContent[_index] != '\n' && fileContent[_index] != '#' && fileContent[_index] != ' ')
 					link += fileContent[_index];
