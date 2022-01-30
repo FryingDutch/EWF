@@ -1,0 +1,9 @@
+<>"Very good... Thats all we needed...", a voice says.
+At that point your computers shuts off immediatly.
+You look at the clock and realise it's already 3am.</>
+
+<>Weird stuff, but time to go to sleep. [Go to the bedroom]</>
+<>Guess I can still code for at least 3 more. [Turn computer back on]</>
+<>Time for coffee. [Go to kitchen]</>
+
+~D
