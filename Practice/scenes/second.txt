@@ -1,0 +1,13 @@
+<>New Scene
+I Dont Know if it works</> Story always first
+<>Looking Good!</> First option
+<>Whats ya doing there old man?</> Second Option
+<>Run, Run like the wind.</> Third Option
+<>Knife him!</> Fourth Option
+
+# second\third // First option file location, 
+# fourth // Second
+# fifth // Third
+# sixth // Fourth
+
+~D
