@@ -9,6 +9,7 @@ namespace EWF
 
 	std::vector<std::string> FileParser::textBlocks;
 	std::vector<std::string> FileParser::fileLinks;
+	std::vector<bool> FileParser::readingFlagValue{ false, false, false, false };
 
 	char FileParser::sceneType;
 	std::string FileParser::filePath = "intro";
@@ -79,6 +80,12 @@ namespace EWF
 
 	void FileParser::handleFlags(size_t& _index)
 	{
+		if (read && (_index + 1) == fileContent.size())
+		{
+			System::errorMessage("Block not closed </>", true);
+			return;
+		}
+
 		if (fileContent[_index] == '<')
 		{
 			if (isStartBlockFlag(_index))
@@ -140,7 +147,8 @@ namespace EWF
 				break;
 
 			default:
-				break;
+				System::errorMessage("Not a valid SceneFlag", true);
+				return;
 			}
 		}
 	}
@@ -162,9 +170,8 @@ namespace EWF
 		for (size_t i = 0; i < fileContent.size(); i++)
 		{
 			if (read)
-			{
 				block += fileContent[i];
-			}
+
 			handleFlags(i);
 		}
 	}

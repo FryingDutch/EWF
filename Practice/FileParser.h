@@ -13,18 +13,23 @@ namespace EWF
 
 		static std::vector<std::string> textBlocks;
 		static std::vector<std::string> fileLinks;
+		static std::vector<bool> readingFlagValue;
 
 		static std::string block;
 		static std::string message;
 
 		static std::string goToFile;
-
 		static std::string filePath;
 
 	public:
 		enum : char
 		{
-			INTRO = 'I', DEFAULT = 'D'
+			INTRO_SCENETYPE = 'I', DEFAULT_SCENETYPE = 'D'
+		};
+
+		enum
+		{
+			BLOCK_FLAG, FILELINK_FLAG, SCENETYPE_FLAG, MESSAGE_FLAG
 		};
 
 	public:

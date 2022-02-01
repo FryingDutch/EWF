@@ -11,25 +11,38 @@ namespace EWF
 	DefaultScene SceneManager::defaultScene;
 	IntroScene SceneManager::introScene;
 
-
+	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
-		if (FileParser::sceneType == INTRO)
+		switch (FileParser::sceneType)
 		{
+		case INTRO:
 			introScene.setText(FileParser::textBlocks);
 			introScene.render();
 			response = 1;
-		}
+			break;
 
-		else if (FileParser::sceneType == DEFAULT)
-		{
+		case DEFAULT:
 			defaultScene.setText(FileParser::textBlocks);
 			(FileParser::message.size() > 0) ? defaultScene.render(FileParser::message) : defaultScene.render();
 			response = defaultScene.getResponse();
+			break;
+
+		// TO-DO add more sceneTemplates to use.
+		default:
+			System::errorMessage("Not a valid sceneType");
+			return;
 		}
 
 		// Set the next file to read.
-		FileParser::filePath = FileParser::fileLinks[response - 1];
+		if ((response - 1) < FileParser::fileLinks.size() && response - 1 >= 0 && FileParser::fileLinks.size() > 0)
+			FileParser::filePath = FileParser::fileLinks[response - 1];
+
+		// else if ((response - 1) < 0)
+			// Go to menu
+
+		else if(FileParser::fileLinks.size() <= 0)
+			System::errorMessage("No file link bound to this choice", true);
 	}
 
 	void SceneManager::runGame()

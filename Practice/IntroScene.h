@@ -13,7 +13,6 @@ namespace EWF
 			DefaultScene(_text) {};
 
 		void render(std::string _message = "Tell your name: ") {
-			Player::setName("");
 			while (Player::getName().empty() || Player::getName().size() > 15)
 			{
 				system("CLS");

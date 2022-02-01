@@ -11,29 +11,23 @@ namespace EWF
 	std::ifstream System::readFiles;
 	bool System::isRunning = true;
 
+	void System::errorMessage(const char* message, bool _hardError)
+	{
+		isRunning = !_hardError;
+		std::cerr << "[ERROR]: " << message << "! Terminating...\n";
+		if (!isRunning)
+			exit(EXIT_FAILURE);
+	}
+
 	std::string System::getWorkingDirectory()
 	{
 		const char* wd = _getcwd(NULL, 0);
 		return wd;
 	}
 
-	bool System::fileFound(const char* _name)
-	{
-		std::string fullPath{ _name };
-
-		readFiles.open(fullPath);
-		if (readFiles)
-		{
-			readFiles.close();
-			return true;
-		}
-		return false;
-	}
-
 	std::string System::readFile(const char* _name)
 	{
 		std::ostringstream ss;
-		std::string result;
 
 		std::ifstream fileToRead(_name);
 		if (fileToRead)
@@ -43,10 +37,9 @@ namespace EWF
 			return ss.str();
 		}
 		else
-		{
-			result = "";
-			return result;
-		}
+			errorMessage("File not found", true);
+
+		return ss.str(); // Will never reach, but muffles compiler for non returning path.
 	}
 
 	bool System::isDigit(std::string str)

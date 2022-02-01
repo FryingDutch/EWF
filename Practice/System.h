@@ -18,10 +18,10 @@ namespace EWF
 		static bool isRunning;
 
 	public:
+		static void errorMessage(const char* _msg, bool _hardError = false);
 		static std::string getWorkingDirectory();
 
 		static std::string readFile(const char* _name);
-		static bool fileFound(const char* _name);
 
 		static std::string getInput(std::string message = "Make a choice: ");
 		static bool isDigit(std::string str);
