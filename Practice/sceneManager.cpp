@@ -18,13 +18,13 @@ namespace EWF
 		{
 		case INTRO:
 			introScene.setText(FileParser::textBlocks);
-			(FileParser::message.size() > 0) ? introScene.render(FileParser::message) : introScene.render(); // If message is found in file, render with that, otherwise default
+			(FileParser::customMessage.size() > 0) ? introScene.render(FileParser::customMessage) : introScene.render(FileParser::message); // If message is found in file, render with that, otherwise default
 			response = 1;
 			break;
 
 		case DEFAULT:
 			defaultScene.setText(FileParser::textBlocks);
-			(FileParser::message.size() > 0) ? defaultScene.render(FileParser::message) : defaultScene.render();
+			(FileParser::customMessage.size() > 0) ? defaultScene.render(FileParser::customMessage) : defaultScene.render(FileParser::message);
 			response = defaultScene.getResponse();
 			break;
 

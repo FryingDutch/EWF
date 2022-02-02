@@ -121,13 +121,18 @@ namespace EWF
 
 			for (_position = 1; _position <= maxSizeNeeded; _position += 2)
 			{
-				if ((_index + _position + 1) < fileContent.size() && std::isdigit(fileContent[_index + _position]))
+				if ((_index + _position + 2) < fileContent.size() && std::isdigit(fileContent[_index + _position]))
 				{
 					fileLink.boundChoices.push_back(fileContent[(_index + _position)] - 48);
 
-					if (fileContent[_index + _position + 1] == ',')
+					if (std::isdigit(fileContent[_index + _position + 2]) && fileContent[_index + _position + 1] == ',')
 					{
 						continue;
+					}
+
+					else if (fileContent[_index + _position + 1] == ',' && !std::isdigit(fileContent[_index + _position + 2]))
+					{
+						System::errorMessage("Mullti choice operator , not followed by element (digit)", true);
 					}
 
 					else
@@ -157,7 +162,6 @@ namespace EWF
 
 		else if (isStartMessageFlag(_index))
 		{
-			customMessage = "";
 			// Add 2 to index to pass the flag and start reading on the next element
 			_index += 2;
 			while (_index < fileContent.size())
@@ -198,6 +202,7 @@ namespace EWF
 	void FileParser::defaultAllData()
 	{
 		readingFlagValue[0] = false;
+		customMessage = "";
 
 		textBlocks.clear();
 		textBlocks.shrink_to_fit();
