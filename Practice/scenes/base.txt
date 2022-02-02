@@ -7,9 +7,9 @@ You look at the clock and realise it's already 3am.</>
 <>Time for coffee. [Go to kitchen]</>
 <>Guess im taking my nightlamp to bed today. [Go to the bedroom]</>
 
-#1,4 province/woods/cabine01/bedroom #!
+#1,4 province\woods\cabine01\bedroom#!
 #2 province/woods/cabine01/restart_computer_event #!
-#3 province/woods/cabine01/kitchen #!
+#3 province\woods\cabine01\kitchen#!
 
 ~D
 -*What do you do?: -/*
