@@ -18,7 +18,7 @@ namespace EWF
 		{
 		case INTRO:
 			introScene.setText(FileParser::textBlocks);
-			introScene.render();
+			(FileParser::message.size() > 0) ? introScene.render(FileParser::message) : introScene.render(); // If message is found in file, render with that, otherwise default
 			response = 1;
 			break;
 
@@ -35,13 +35,21 @@ namespace EWF
 		}
 
 		// Set the next file to read.
-		if ((response - 1) < FileParser::fileLinks.size() && response - 1 >= 0 && FileParser::fileLinks.size() > 0)
-			FileParser::filePath = FileParser::fileLinks[response - 1];
+		for (size_t i = 0; i < FileParser::fileLinks.size(); i++)
+		{
+			for (size_t j = 0; j < FileParser::fileLinks[i].boundChoices.size(); j++)
+			{
+				if (response == FileParser::fileLinks[i].boundChoices[j])
+				{
+					FileParser::filePath = FileParser::fileLinks[i].link;
+				}
+			}
+		}
 
 		// else if ((response - 1) < 0)
 			// Go to menu
 
-		else if(FileParser::fileLinks.size() <= 0)
+		if(FileParser::fileLinks.size() <= 0)
 			System::errorMessage("No file link bound to this choice", true);
 	}
 

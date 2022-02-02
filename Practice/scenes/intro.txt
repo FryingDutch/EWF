@@ -1,7 +1,6 @@
-<>You are sitting at home behind your computer, doing your regular
-coding things. When at some point you get a strange pop-up, requiring to fill in your name.
-Oddly enough you feel compelled to do so... <>
+<>You </>
 
-#1 base#
+#1,2 base#!
 ~I
 -*Tell us your name: -/*
+[ $HP ]

@@ -6,4 +6,6 @@ You look at the clock and realise it's already 3am.</>
 <>Guess I can still code for at least 3 more. [Turn computer back on]</>
 <>Time for coffee. [Go to kitchen]</>
 
+#1,2,3 next#!
 ~D
+-*custom Message: -/*

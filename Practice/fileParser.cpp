@@ -3,12 +3,11 @@
 
 namespace EWF
 {
-	bool FileParser::read = false;
-
 	std::string FileParser::goToFile = "";
 
 	std::vector<std::string> FileParser::textBlocks;
-	std::vector<std::string> FileParser::fileLinks;
+
+	std::vector<FileParser::FileLink> FileParser::fileLinks;
 	std::vector<bool> FileParser::readingFlagValue{ false, false, false, false };
 
 	char FileParser::sceneType;
@@ -16,13 +15,14 @@ namespace EWF
 	std::string FileParser::fileContent;
 
 	std::string FileParser::block = "";
-	std::string FileParser::message;
+	std::string FileParser::message = "Make a choice: ";
+	std::string FileParser::customMessage = "";
 
 	bool FileParser::isStartMessageFlag(size_t _index)
 	{
 		if (_index + 1 < fileContent.size())
 		{
-			if (!read && fileContent[_index] == '-' && (_index + 1) < fileContent.size() && fileContent[_index + 1] == '*')
+			if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '-' && (_index + 1) < fileContent.size() && fileContent[_index + 1] == '*')
 				return true;
 
 			return false;
@@ -34,7 +34,7 @@ namespace EWF
 	{
 		if (_index + 2 < fileContent.size())
 		{
-			if (!read && fileContent[_index] == '-' && (_index + 2) < fileContent.size() && fileContent[_index + 1] == '/' && fileContent[_index + 2] == '*')
+			if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '-' && (_index + 2) < fileContent.size() && fileContent[_index + 1] == '/' && fileContent[_index + 2] == '*')
 				return true;
 
 			return false;
@@ -62,9 +62,17 @@ namespace EWF
 		return false;
 	}
 
-	bool FileParser::isFileLinkFlag(size_t _index)
+	bool FileParser::isStartFileLinkFlag(size_t _index)
 	{
-		if (!read && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]))
+		if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]))
+			return true;
+
+		return false;
+	}
+
+	bool FileParser::isEndFileLinkFlag(size_t _index)
+	{
+		if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && fileContent[_index + 1] == '!')
 			return true;
 
 		return false;
@@ -72,7 +80,7 @@ namespace EWF
 
 	bool FileParser::isSceneTypeFlag(size_t _index)
 	{
-		if (!read && fileContent[_index] == '~' && (_index + 1) < fileContent.size())
+		if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '~' && _index < (fileContent.size() - 1) )
 			return true;
 
 		return false;
@@ -80,7 +88,8 @@ namespace EWF
 
 	void FileParser::handleFlags(size_t& _index)
 	{
-		if (read && (_index + 1) == fileContent.size())
+		// if at end of file and block is still being read
+		if (readingFlagValue[FLAG::BLOCK] && (_index + 1) == fileContent.size())
 		{
 			System::errorMessage("Block not closed </>", true);
 			return;
@@ -90,44 +99,77 @@ namespace EWF
 		{
 			if (isStartBlockFlag(_index))
 			{
-				read = true;
+				readingFlagValue[FLAG::BLOCK] = true;
 				_index++;
 			}
 
 			else if (isEndBlockFlag(_index))
 			{
-				read = false;
-				_index += 2;
-				block.pop_back();
+				readingFlagValue[FLAG::BLOCK] = false;
+				_index += 2; // No need to read the next 2 itterations as we already know its the endBlockFlag
+				block.pop_back(); // We read the < in because we are still at read mode coming in. So pop one back
 				textBlocks.push_back(block);
 				block = "";
 			}
 		}
 
-		else if (isFileLinkFlag(_index))
+		else if (isStartFileLinkFlag(_index))
 		{
-			std::string link;
-			for (_index = _index + 3; _index + 1 <= fileContent.size(); _index++)
+			FileLink fileLink;
+			size_t maxSizeNeeded = 19;
+			size_t _position;
+
+			for (_position = 1; _position <= maxSizeNeeded; _position += 2)
 			{
-				if (fileContent[_index] != '\n' && fileContent[_index] != '#' && fileContent[_index] != ' ')
-					link += fileContent[_index];
+				if ((_index + _position + 1) < fileContent.size() && std::isdigit(fileContent[_index + _position]))
+				{
+					fileLink.boundChoices.push_back(fileContent[(_index + _position)] - 48);
+
+					if (fileContent[_index + _position + 1] == ',')
+					{
+						continue;
+					}
+
+					else
+						break;
+				}
+			}
+			
+			_index += _position + 2;
+
+			while (_index < fileContent.size())
+			{
+				if (!isEndFileLinkFlag(_index))
+				{
+					fileLink.link += fileContent[_index];
+					_index++;
+				}
+
+				else if (_index == fileContent.size() - 1)
+					System::errorMessage("# File flag not closed#");
 
 				else
 					break;
-			}
-			fileLinks.push_back(link);
+			}			
+			
+			fileLinks.push_back(fileLink);
 		}
 
 		else if (isStartMessageFlag(_index))
 		{
+			customMessage = "";
+			// Add 2 to index to pass the flag and start reading on the next element
 			_index += 2;
 			while (_index < fileContent.size())
 			{
 				if (!isEndMessageFlag(_index))
 				{
-					message += fileContent[_index];
+					customMessage += fileContent[_index];
 					_index++;
 				}
+
+				else if(_index == fileContent.size() - 1)
+					System::errorMessage("Message flag not closed!-/*");
 
 				else
 					break;
@@ -136,40 +178,49 @@ namespace EWF
 
 		else if (isSceneTypeFlag(_index))
 		{
+			// Looks redundant, but the switch is the error catcher in this case, defaulting always to a hard error.
 			switch (fileContent[_index + 1])
 			{
-			case INTRO:
-				sceneType = INTRO;
+			case INTRO_SCENETYPE:
+				sceneType = INTRO_SCENETYPE;
 				break;
 
-			case DEFAULT:
-				sceneType = DEFAULT;
+			case DEFAULT_SCENETYPE:
+				sceneType = DEFAULT_SCENETYPE;
 				break;
 
 			default:
 				System::errorMessage("Not a valid SceneFlag", true);
-				return;
 			}
 		}
 	}
 
-	void FileParser::loadText()
+	void FileParser::defaultAllData()
 	{
+		readingFlagValue[0] = false;
+
 		textBlocks.clear();
 		textBlocks.shrink_to_fit();
 
-		goToFile = System::getWorkingDirectory() + "\\scenes\\" + filePath + ".txt";
-
 		fileLinks.clear();
 		fileLinks.shrink_to_fit();
+	}
 
+	void FileParser::loadText()
+	{
+		// clear all data of last scene
+		defaultAllData();
+
+		// Construct the path for the next file
+		goToFile = System::getWorkingDirectory() + "\\scenes\\" + filePath + ".txt";
+
+		// Parse the content of the file into a string
 		fileContent = System::readFile(goToFile.c_str());
 
-		read = false;
-
+		// Start reading the content of the file per char
 		for (size_t i = 0; i < fileContent.size(); i++)
 		{
-			if (read)
+			if (readingFlagValue[FLAG::BLOCK])
 				block += fileContent[i];
 
 			handleFlags(i);
