@@ -14,7 +14,10 @@ namespace EWF
 	void System::errorMessage(const char* message, bool _hardError)
 	{
 		isRunning = !_hardError;
-		std::cerr << "[ERROR]: " << message << "! Terminating...\n";
+		const char* terminatingText = isRunning ? "\n" : " Terminating...\n";
+
+		std::cerr << "[ERROR]: " << message << "!" << terminatingText;
+
 		if (!isRunning)
 			exit(EXIT_FAILURE);
 	}

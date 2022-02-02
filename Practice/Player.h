@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "Entity.h"
+#include "Item.h"
 
 namespace EWF
 {
@@ -16,6 +18,8 @@ namespace EWF
 
 		static std::string name;
 		static uint32_t age;
+
+		static std::vector<Item> items;
 
 	public:
 		static bool isMale;
@@ -38,5 +42,11 @@ namespace EWF
 
 		static uint32_t getDefense() { return defense; }
 		static void setDefense(uint32_t _defense) { defense = _defense; }
+
+		static void grabItem(Item _item)
+		{
+			_item.owned = true;
+			items.push_back(_item);
+		}
 	};
 }
