@@ -21,8 +21,6 @@ namespace EWF
 				std::cout << text[STORY] << "\n\n";
 				Player::setName(System::getInput(_message));
 			}
-
-			Player::setAge(0);
 		}
 	};
 }

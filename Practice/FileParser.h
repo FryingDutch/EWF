@@ -22,6 +22,7 @@ namespace EWF
 
 		static std::vector<FileLink> fileLinks;
 		static std::vector<bool> readingFlagValue;
+		static std::vector<std::string> variables;
 
 		static std::string block;
 		static std::string message;
@@ -30,7 +31,19 @@ namespace EWF
 		static std::string goToFile;
 		static std::string filePath;
 
+		static const uint32_t NUMOFOPERATORS;
+		static const char operators[];
+
 	public:
+		enum
+		{
+			HP = 0, ATK, DEF, AGE, NAME
+		};
+		enum
+		{
+			PLUS = 0, MINUS, EQUALS, VARIABLE
+		};
+
 		enum : char
 		{
 			INTRO_SCENETYPE = 'I', DEFAULT_SCENETYPE = 'D'
@@ -43,6 +56,8 @@ namespace EWF
 
 	public:
 		static void defaultAllData();
+		static bool isVariableFlag(size_t _index);
+		static bool isOperator(size_t _index);
 
 		static bool isStartMessageFlag(size_t _index);
 		static bool isEndMessageFlag(size_t _index);
@@ -55,6 +70,7 @@ namespace EWF
 
 		static bool isSceneTypeFlag(size_t _index);
 		
+		static void handleVariableFlag(size_t& _index);
 		static void handleFlags(size_t& _index);
 
 		static void loadText();

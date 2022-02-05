@@ -18,7 +18,7 @@ namespace EWF
 		{
 		case INTRO:
 			introScene.setText(FileParser::textBlocks);
-			(FileParser::customMessage.size() > 0) ? introScene.render(FileParser::customMessage) : introScene.render(FileParser::message); // If message is found in file, render with that, otherwise default
+			(FileParser::customMessage.size() > 0) ? introScene.render(FileParser::customMessage) : introScene.render(FileParser::message); // If custom message is found in file, render with that, otherwise default
 			response = 1;
 			break;
 
@@ -37,12 +37,11 @@ namespace EWF
 		// Set the next file to read.
 		for (size_t i = 0; i < FileParser::fileLinks.size(); i++)
 		{
+			// Go trough all links, check the bound choices
 			for (size_t j = 0; j < FileParser::fileLinks[i].boundChoices.size(); j++)
 			{
 				if (response == FileParser::fileLinks[i].boundChoices[j])
-				{
-					FileParser::filePath = FileParser::fileLinks[i].link;
-				}
+					FileParser::filePath = FileParser::fileLinks[i].link; // if its a match, return the current link
 			}
 		}
 

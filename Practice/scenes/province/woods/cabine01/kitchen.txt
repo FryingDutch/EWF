@@ -1,9 +1,9 @@
-<>Your bed is here</>
+<>Your stoves is here</>
 
 <>Cook</>
 <>Go to bedroom</>
 
 ~D 
 
-#1 base#!
-#2 province/woods/cabine01/bedroom#!
+#1 base #!
+#2 province/woods/cabine01/bedroom #!

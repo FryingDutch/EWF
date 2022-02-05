@@ -1,5 +1,8 @@
 #include "System.h"
 #include "FileParser.h"
+#include <functional>
+#include <algorithm>
+#include "Player.h"
 
 namespace EWF
 {
@@ -9,6 +12,7 @@ namespace EWF
 
 	std::vector<FileParser::FileLink> FileParser::fileLinks;
 	std::vector<bool> FileParser::readingFlagValue{ false, false, false, false };
+	std::vector<std::string> FileParser::variables{ "HP", "ATK", "DEF", "AGE", "NAME" };
 
 	char FileParser::sceneType;
 	std::string FileParser::filePath = "intro";
@@ -18,11 +22,26 @@ namespace EWF
 	std::string FileParser::message = "Make a choice: ";
 	std::string FileParser::customMessage = "";
 
+	const uint32_t FileParser::NUMOFOPERATORS = 4;
+	const char FileParser::operators[NUMOFOPERATORS] = { '+', '-', '=', '$'};
+	
+	bool FileParser::isVariableFlag(size_t _index)
+	{
+		if (_index + 1 < fileContent.size())
+		{
+			if (fileContent[_index] == operators[VARIABLE] && fileContent[_index + 1] != ' ' && fileContent[_index + 1] != '\n' && !std::isdigit(fileContent[_index + 1]))
+				return true;
+
+			return false;
+		}
+		return false;
+	}
+
 	bool FileParser::isStartMessageFlag(size_t _index)
 	{
 		if (_index + 1 < fileContent.size())
 		{
-			if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '-' && (_index + 1) < fileContent.size() && fileContent[_index + 1] == '*')
+			if (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '-' && fileContent[_index + 1] == '*')
 				return true;
 
 			return false;
@@ -34,7 +53,7 @@ namespace EWF
 	{
 		if (_index + 2 < fileContent.size())
 		{
-			if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '-' && (_index + 2) < fileContent.size() && fileContent[_index + 1] == '/' && fileContent[_index + 2] == '*')
+			if (readingFlagValue[FLAG::MESSAGE] && fileContent[_index] == '-' && fileContent[_index + 1] == '/' && fileContent[_index + 2] == '*')
 				return true;
 
 			return false;
@@ -44,7 +63,7 @@ namespace EWF
 
 	bool FileParser::isStartBlockFlag(size_t _index)
 	{
-		if (_index + 1 < fileContent.size())
+		if (_index + 1 < fileContent.size() && std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()))
 		{
 			if (fileContent[_index + 1] == '>')
 				return true;
@@ -54,7 +73,7 @@ namespace EWF
 
 	bool FileParser::isEndBlockFlag(size_t _index)
 	{
-		if (_index + 2 < fileContent.size())
+		if (readingFlagValue[FLAG::BLOCK] && _index + 2 < fileContent.size())
 		{
 			if (fileContent[_index + 1] == '/' && fileContent[_index + 2] == '>')
 				return true;
@@ -64,7 +83,7 @@ namespace EWF
 
 	bool FileParser::isStartFileLinkFlag(size_t _index)
 	{
-		if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]))
+		if (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]))
 			return true;
 
 		return false;
@@ -72,15 +91,17 @@ namespace EWF
 
 	bool FileParser::isEndFileLinkFlag(size_t _index)
 	{
-		if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && fileContent[_index + 1] == '!')
-			return true;
-
+		if (readingFlagValue[FLAG::FILELINK])
+		{
+			if ((_index + 2) < fileContent.size() && !readingFlagValue[FLAG::BLOCK] && fileContent[_index] == ' ' && fileContent[_index + 1] == '#' && fileContent[_index + 2] == '!')
+				return true;
+		}
 		return false;
 	}
 
 	bool FileParser::isSceneTypeFlag(size_t _index)
 	{
-		if (!readingFlagValue[FLAG::BLOCK] && fileContent[_index] == '~' && _index < (fileContent.size() - 1) )
+		if (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '~' && _index < (fileContent.size() - 1) && !std::isdigit(fileContent[_index] == '~'))
 			return true;
 
 		return false;
@@ -95,6 +116,97 @@ namespace EWF
 			return;
 		}
 
+		else if (readingFlagValue[FLAG::BLOCK])
+			block += fileContent[_index];
+
+		if (isVariableFlag(_index))
+		{
+			if (fileContent[_index] == operators[VARIABLE] && fileContent[_index + 1] != ' ' && fileContent[_index + 1] != '\n' && !std::isdigit(fileContent[_index + 1]))
+			{
+				static std::string variable;
+				variable = "";
+				char logic_operator = ' ';
+				bool isOperator = false;
+
+				for (; _index + 1 < fileContent.size(); _index++)
+				{
+					for (size_t i = 0; i < NUMOFOPERATORS; i++)
+					{
+						if (fileContent[_index + 1] == operators[i])
+							isOperator = true;
+					}
+
+					if (fileContent[_index + 1] == ' ' || fileContent[_index + 1] == '\n')
+					{
+						System::errorMessage("Unused variable", true);
+					}
+
+					else if (isOperator && fileContent[_index + 2] != ' ' && fileContent[_index + 2] != '\n')
+					{
+						logic_operator = fileContent[_index + 1];
+						_index += 2;
+						break;
+					}	
+
+					else
+						variable.push_back(fileContent[_index + 1]);
+				}
+
+				std::string value = "";
+				if (isOperator)
+				{
+					for (; _index + 1 < fileContent.size(); _index++)
+					{
+						if (fileContent[_index] == ' ' || fileContent[_index] == '\n')
+							break;
+
+						else
+							value.push_back(fileContent[_index]);
+					}
+				}
+
+				if (System::isDigit(value))
+				{
+					if (variable == variables[HP])
+					{
+						switch (logic_operator)
+						{
+						case '=':
+							Player::setHealth(std::stoi(value));
+							break;
+
+						case '+':
+							Player::setHealth(Player::getHealth() + std::stoi(value));
+							break;
+
+						case '-':
+							Player::setHealth(Player::getHealth() - std::stoi(value));
+							break;
+
+						}
+					}
+
+					else if (variable == variables[AGE])
+					{
+						switch (logic_operator)
+						{
+						case '=':
+							Player::setAge(std::stoi(value));
+							break;
+
+						case '+':
+							Player::setAge(Player::getAge() + std::stoi(value));
+							break;
+
+						case '-':
+							Player::setAge(Player::getAge() - std::stoi(value));
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		if (fileContent[_index] == '<')
 		{
 			if (isStartBlockFlag(_index))
@@ -107,7 +219,9 @@ namespace EWF
 			{
 				readingFlagValue[FLAG::BLOCK] = false;
 				_index += 2; // No need to read the next 2 itterations as we already know its the endBlockFlag
-				block.pop_back(); // We read the < in because we are still at read mode coming in. So pop one back
+				if(block.size() > 0)
+					block.pop_back(); // We read the < in because we are still at read mode coming in. So pop one back
+				
 				textBlocks.push_back(block);
 				block = "";
 			}
@@ -115,46 +229,53 @@ namespace EWF
 
 		else if (isStartFileLinkFlag(_index))
 		{
-			FileLink fileLink;
-			size_t maxSizeNeeded = 19;
-			size_t _position;
+			readingFlagValue[FLAG::FILELINK] = true;
 
+			// Create a fileLink to be filled with both the choices as wel as the link.
+			FileLink fileLink;
+			size_t _position; // Starting position, relative to current index
+			size_t maxSizeNeeded = 19; // Size is 2 for each element entered [#1][,2][,3], with a max of 9. 1 Added for starting position.  			
+
+			// Until the maximum allowed of elements, keep looping, adding 2 to position to get the digit we need.
 			for (_position = 1; _position <= maxSizeNeeded; _position += 2)
 			{
+				// if the second position of the element [#1][,2][,3] is a digit
 				if ((_index + _position + 2) < fileContent.size() && std::isdigit(fileContent[_index + _position]))
 				{
-					fileLink.boundChoices.push_back(fileContent[(_index + _position)] - 48);
+					fileLink.boundChoices.push_back(fileContent[(_index + _position)] - 48); // Get the digit, but since its read as a char, retract 48 to get its integral value.
 
+					// If the next element fits the standard, do another cycle
 					if (std::isdigit(fileContent[_index + _position + 2]) && fileContent[_index + _position + 1] == ',')
-					{
 						continue;
-					}
 
+					// Else if there is a [,non_digit], end program. 
 					else if (fileContent[_index + _position + 1] == ',' && !std::isdigit(fileContent[_index + _position + 2]))
-					{
-						System::errorMessage("Mullti choice operator , not followed by element (digit)", true);
-					}
+						System::errorMessage("Mullti choice operator , not followed by digit", true);
 
+					// else break the loop
 					else
 						break;
 				}
 			}
 			
-			_index += _position + 2;
+			_index += _position + 2; // Set the index to past everything we read in, add two for empty space ' ' and the first char to be read next
 
 			while (_index < fileContent.size())
 			{
-				if (!isEndFileLinkFlag(_index))
+				if (_index == fileContent.size() - 1)
+					System::errorMessage("# File flag not closed #", true);
+
+				else if (!isEndFileLinkFlag(_index))
 				{
 					fileLink.link += fileContent[_index];
 					_index++;
-				}
-
-				else if (_index == fileContent.size() - 1)
-					System::errorMessage("# File flag not closed#");
+				}				
 
 				else
+				{
+					readingFlagValue[FLAG::FILELINK] = false;
 					break;
+				}
 			}			
 			
 			fileLinks.push_back(fileLink);
@@ -162,21 +283,26 @@ namespace EWF
 
 		else if (isStartMessageFlag(_index))
 		{
+			readingFlagValue[FLAG::MESSAGE] = true;
+
 			// Add 2 to index to pass the flag and start reading on the next element
 			_index += 2;
 			while (_index < fileContent.size())
 			{
-				if (!isEndMessageFlag(_index))
+				if(_index == fileContent.size() - 1)
+					System::errorMessage("-* Message flag not closed!-/*", true);
+
+				else if (!isEndMessageFlag(_index))
 				{
 					customMessage += fileContent[_index];
 					_index++;
 				}
 
-				else if(_index == fileContent.size() - 1)
-					System::errorMessage("Message flag not closed!-/*");
-
 				else
+				{
+					readingFlagValue[FLAG::MESSAGE] = false;
 					break;
+				}
 			}
 		}
 
@@ -201,7 +327,9 @@ namespace EWF
 
 	void FileParser::defaultAllData()
 	{
-		readingFlagValue[0] = false;
+		for(size_t i = 0; i < readingFlagValue.size(); i++)
+			readingFlagValue[i] = false;
+
 		customMessage = "";
 
 		textBlocks.clear();
@@ -225,9 +353,6 @@ namespace EWF
 		// Start reading the content of the file per char
 		for (size_t i = 0; i < fileContent.size(); i++)
 		{
-			if (readingFlagValue[FLAG::BLOCK])
-				block += fileContent[i];
-
 			handleFlags(i);
 		}
 	}
