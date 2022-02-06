@@ -28,83 +28,59 @@ namespace EWF
 	bool FileParser::isVariableFlag(size_t _index)
 	{
 		if (_index + 1 < fileContent.size())
-		{
-			if (fileContent[_index] == operators[VARIABLE] && fileContent[_index + 1] != ' ' && fileContent[_index + 1] != '\n' && !std::isdigit(fileContent[_index + 1]))
-				return true;
+			return (fileContent[_index] == operators[VARIABLE] && fileContent[_index + 1] != ' ' && fileContent[_index + 1] != '\n' && !std::isdigit(fileContent[_index + 1]));
 
-			return false;
-		}
 		return false;
 	}
 
 	bool FileParser::isStartMessageFlag(size_t _index)
 	{
 		if (_index + 1 < fileContent.size())
-		{
-			if (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '-' && fileContent[_index + 1] == '*')
-				return true;
+			return (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '-' && fileContent[_index + 1] == '*');
 
-			return false;
-		}
 		return false;
 	}
 
 	bool FileParser::isEndMessageFlag(size_t _index)
 	{
 		if (_index + 2 < fileContent.size())
-		{
-			if (readingFlagValue[FLAG::MESSAGE] && fileContent[_index] == '-' && fileContent[_index + 1] == '/' && fileContent[_index + 2] == '*')
-				return true;
+			return (readingFlagValue[FLAG::MESSAGE] && fileContent[_index] == '-' && fileContent[_index + 1] == '/' && fileContent[_index + 2] == '*');
 
-			return false;
-		}
 		return false;
 	}
 
 	bool FileParser::isStartBlockFlag(size_t _index)
 	{
 		if (_index + 1 < fileContent.size() && std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()))
-		{
-			if (fileContent[_index + 1] == '>')
-				return true;
-		}
+			return (fileContent[_index + 1] == '>');
+
 		return false;
 	}
 
 	bool FileParser::isEndBlockFlag(size_t _index)
 	{
 		if (readingFlagValue[FLAG::BLOCK] && _index + 2 < fileContent.size())
-		{
-			if (fileContent[_index + 1] == '/' && fileContent[_index + 2] == '>')
-				return true;
-		}
+			return (fileContent[_index + 1] == '/' && fileContent[_index + 2] == '>');
+
 		return false;
 	}
 
 	bool FileParser::isStartFileLinkFlag(size_t _index)
 	{
-		if (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]))
-			return true;
-
-		return false;
+		return (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '#' && (_index + 1) < fileContent.size() && std::isdigit(fileContent[_index + 1]));
 	}
 
 	bool FileParser::isEndFileLinkFlag(size_t _index)
 	{
 		if (readingFlagValue[FLAG::FILELINK])
-		{
-			if ((_index + 2) < fileContent.size() && !readingFlagValue[FLAG::BLOCK] && fileContent[_index] == ' ' && fileContent[_index + 1] == '#' && fileContent[_index + 2] == '!')
-				return true;
-		}
+			return ((_index + 2) < fileContent.size() && !readingFlagValue[FLAG::BLOCK] && fileContent[_index] == ' ' && fileContent[_index + 1] == '#' && fileContent[_index + 2] == '!');
+
 		return false;
 	}
 
 	bool FileParser::isSceneTypeFlag(size_t _index)
 	{
-		if (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '~' && _index < (fileContent.size() - 1) && !std::isdigit(fileContent[_index] == '~'))
-			return true;
-
-		return false;
+		return (std::all_of(readingFlagValue.begin(), readingFlagValue.end(), std::logical_not<bool>()) && fileContent[_index] == '~' && _index < (fileContent.size() - 1) && !std::isdigit(fileContent[_index] == '~'));
 	}
 
 	std::vector<std::string> FileParser::handleVariableFlag(size_t& _index)
