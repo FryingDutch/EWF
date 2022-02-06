@@ -2,8 +2,8 @@
 
 namespace EWF
 {
-	uint32_t Player::maxHealth = 3;
-	uint32_t Player::health = Player::maxHealth;
+	uint32_t Player::maxHealth = 10;
+	int32_t Player::health = 1;
 	int32_t Player::minHealth = 0;
 
 	uint32_t Player::attack = 0;

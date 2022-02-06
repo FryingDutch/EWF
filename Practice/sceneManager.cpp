@@ -17,26 +17,113 @@ namespace EWF
 		{
 			std::string variableToChange = FileParser::fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
 			char log_operator = FileParser::fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
-			uint32_t value = std::stoi(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]);
+			int32_t value;
+			std::string valueStr{ "" };
+			if (System::isDigit(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]))
+				value = std::stoi(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]);
+				
+			else
+				valueStr = FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE];
 
 			if (variableToChange == FileParser::variables[FileParser::HP])
 			{
 				switch (log_operator)
 				{
 				case '=':
-					Player::setHealth(value);
+					(value > Player::getMaxHealth()) ? Player::setHealth(Player::getMaxHealth()) : Player::setHealth(value);
 					break;
 
 				case '+':
-					Player::setHealth(Player::getHealth() + value);
+					((Player::getHealth() + value) > Player::getMaxHealth()) ? Player::setHealth(Player::getMaxHealth()) : Player::setHealth(Player::getHealth() + value);
 					break;
 
 				case '-':
-					Player::setHealth(Player::getHealth() - value);
+					((Player::getHealth() - value) <= 0) ? Player::setHealth(0) : Player::setHealth(Player::getHealth() - value);
+					break;
+
+				}
+
+				if (Player::getHealth() <= 0)
+				{
+					std::cout << "You took " << value << " DMG. \n";
+					System::errorMessage("You have died...", true);
+				}
+			}
+
+			else if (variableToChange == FileParser::variables[FileParser::AGE])
+			{
+				switch (log_operator)
+				{
+				case '=':
+					Player::setAge(value);
+					break;
+
+				case '+':
+					Player::setAge(Player::getAge() + value);
+					break;
+
+				case '-':
+					((Player::getAge() - value) < 0) ? Player::setAge(0) : Player::setAge(Player::getAge() - value);
 					break;
 
 				}
 			}
+
+			else if (variableToChange == FileParser::variables[FileParser::ATK])
+			{
+				switch (log_operator)
+				{
+				case '=':
+					Player::setAttack(value);
+					break;
+
+				case '+':
+					Player::setAttack(Player::getAttack() + value);
+					break;
+
+				case '-':
+					((Player::getAttack() - value) < 0) ? Player::setAttack(0) : Player::setAttack(Player::getAttack() - value);
+					break;
+
+				}
+			}
+
+			else if (variableToChange == FileParser::variables[FileParser::DEF])
+			{
+				switch (log_operator)
+				{
+				case '=':
+					Player::setDefense(value);
+					break;
+
+				case '+':
+					Player::setDefense(Player::getDefense() + value);
+					break;
+
+				case '-':
+					((Player::getDefense() - value) < 0) ? Player::setDefense(0) : Player::setDefense(Player::getDefense() - value);
+					break;
+
+				}
+			}
+
+			else if (variableToChange == FileParser::variables[FileParser::NAME])
+			{
+				if (!valueStr.empty())
+				{
+					switch (log_operator)
+					{
+					case '=':
+						Player::setName(valueStr);
+						break;
+
+					default:
+						System::errorMessage("Not a valid operator for NAME");
+						break;
+					}
+				}
+			}
+
 		}
 
 	}
@@ -77,7 +164,7 @@ namespace EWF
 			}
 		}
 
-		// else if ((response - 1) < 0)
+		// else if ((response - 1) = 0)
 			// Go to menu
 
 		if(FileParser::fileLinks.size() <= 0)

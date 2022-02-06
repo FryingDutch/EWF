@@ -247,8 +247,11 @@ namespace EWF
 					if (fileContent[_index] == ' ' && fileContent[_index + 1] == '|')
 					{
 						readingVariables = true;
-						_index+=3;
+						_index += 3;
 					}
+
+					else if (fileContent[_index] == ' ')
+						_index++;
 
 					else
 					{

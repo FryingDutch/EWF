@@ -10,7 +10,7 @@ namespace EWF
 	{
 	private:
 		static uint32_t maxHealth;
-		static uint32_t health;
+		static int32_t health;
 		static int32_t minHealth;
 
 		static uint32_t attack;
@@ -31,8 +31,8 @@ namespace EWF
 		static std::string getName() { return name; }
 		static uint32_t getAge() { return age; }
 
-		static uint32_t getHealth() { return health; }
-		static void setHealth(uint32_t _health) { health = _health; }
+		static int32_t getHealth() { return health; }
+		static void setHealth(int32_t _health) { health = _health; }
 
 		static uint32_t getMaxHealth() { return maxHealth; }
 		static void setMaxHealth(uint32_t _maxHealth) { maxHealth = _maxHealth; }
