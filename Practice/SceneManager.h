@@ -19,7 +19,8 @@ namespace EWF
 		{
 			INTRO = 'I', DEFAULT = 'D'
 		};
-
+		
+		static void applyStatsChanges(size_t _i);
 		static void buildScene(char _sceneType);
 		static void runGame();
 	};

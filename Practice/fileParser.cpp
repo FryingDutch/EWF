@@ -23,8 +23,8 @@ namespace EWF
 	std::string FileParser::customMessage = "";
 
 	const uint32_t FileParser::NUMOFOPERATORS = 4;
-	const char FileParser::operators[NUMOFOPERATORS] = { '+', '-', '=', '$'};
-	
+	const char FileParser::operators[NUMOFOPERATORS] = { '+', '-', '=', '$' };
+
 	bool FileParser::isVariableFlag(size_t _index)
 	{
 		if (_index + 1 < fileContent.size())
@@ -107,24 +107,19 @@ namespace EWF
 		return false;
 	}
 
-	void FileParser::handleFlags(size_t& _index)
+	std::vector<std::string> FileParser::handleVariableFlag(size_t& _index)
 	{
-		// if at end of file and block is still being read
-		if (readingFlagValue[FLAG::BLOCK] && (_index + 1) == fileContent.size())
-		{
-			System::errorMessage("Block not closed </>", true);
-			return;
-		}
-
-		else if (readingFlagValue[FLAG::BLOCK])
-			block += fileContent[_index];
+		std::vector<std::string> variableBuildUp;
+		static std::string variableChange;
+		variableChange = "";
 
 		if (isVariableFlag(_index))
 		{
-			if (fileContent[_index] == operators[VARIABLE] && fileContent[_index + 1] != ' ' && fileContent[_index + 1] != '\n' && !std::isdigit(fileContent[_index + 1]))
+			if (fileContent[_index + 1] != ' ' && fileContent[_index + 1] != '\n' && !std::isdigit(fileContent[_index + 1]))
 			{
 				static std::string variable;
 				variable = "";
+
 				char logic_operator = ' ';
 				bool isOperator = false;
 
@@ -137,16 +132,14 @@ namespace EWF
 					}
 
 					if (fileContent[_index + 1] == ' ' || fileContent[_index + 1] == '\n')
-					{
 						System::errorMessage("Unused variable", true);
-					}
 
 					else if (isOperator && fileContent[_index + 2] != ' ' && fileContent[_index + 2] != '\n')
 					{
 						logic_operator = fileContent[_index + 1];
 						_index += 2;
 						break;
-					}	
+					}
 
 					else
 						variable.push_back(fileContent[_index + 1]);
@@ -164,48 +157,25 @@ namespace EWF
 							value.push_back(fileContent[_index]);
 					}
 				}
-
-				if (System::isDigit(value))
-				{
-					if (variable == variables[HP])
-					{
-						switch (logic_operator)
-						{
-						case '=':
-							Player::setHealth(std::stoi(value));
-							break;
-
-						case '+':
-							Player::setHealth(Player::getHealth() + std::stoi(value));
-							break;
-
-						case '-':
-							Player::setHealth(Player::getHealth() - std::stoi(value));
-							break;
-
-						}
-					}
-
-					else if (variable == variables[AGE])
-					{
-						switch (logic_operator)
-						{
-						case '=':
-							Player::setAge(std::stoi(value));
-							break;
-
-						case '+':
-							Player::setAge(Player::getAge() + std::stoi(value));
-							break;
-
-						case '-':
-							Player::setAge(Player::getAge() - std::stoi(value));
-							break;
-						}
-					}
-				}
+				std::string charStr(1, logic_operator);
+				variableBuildUp = { variable, charStr, value };
 			}
 		}
+
+		return variableBuildUp;
+	}
+
+	void FileParser::handleFlags(size_t& _index)
+	{
+		// if at end of file and block is still being read
+		if (readingFlagValue[FLAG::BLOCK] && (_index + 1) == fileContent.size())
+		{
+			System::errorMessage("Block not closed </>", true);
+			return;
+		}
+
+		else if (readingFlagValue[FLAG::BLOCK])
+			block += fileContent[_index];
 
 		if (fileContent[_index] == '<')
 		{
@@ -219,9 +189,9 @@ namespace EWF
 			{
 				readingFlagValue[FLAG::BLOCK] = false;
 				_index += 2; // No need to read the next 2 itterations as we already know its the endBlockFlag
-				if(block.size() > 0)
+				if (block.size() > 0)
 					block.pop_back(); // We read the < in because we are still at read mode coming in. So pop one back
-				
+
 				textBlocks.push_back(block);
 				block = "";
 			}
@@ -257,27 +227,43 @@ namespace EWF
 						break;
 				}
 			}
-			
-			_index += _position + 2; // Set the index to past everything we read in, add two for empty space ' ' and the first char to be read next
 
+			_index += _position + 2; // Set the index to pass everything we read in, add two for empty space ' ' and the first char to be read next
+			bool readingVariables = false;
 			while (_index < fileContent.size())
 			{
 				if (_index == fileContent.size() - 1)
 					System::errorMessage("# File flag not closed #", true);
 
-				else if (!isEndFileLinkFlag(_index))
+				if (readingVariables)
 				{
-					fileLink.link += fileContent[_index];
-					_index++;
-				}				
+					std::vector<std::string> variableChange = handleVariableFlag(_index);
+					if (!variableChange.empty())
+						fileLink.variableChanges.push_back(variableChange);
+				}
+
+				if (!isEndFileLinkFlag(_index))
+				{
+					if (fileContent[_index] == ' ' && fileContent[_index + 1] == '|')
+					{
+						readingVariables = true;
+						_index+=3;
+					}
+
+					else
+					{
+						fileLink.link += fileContent[_index];
+						_index++;
+					}
+				}
 
 				else
 				{
 					readingFlagValue[FLAG::FILELINK] = false;
 					break;
 				}
-			}			
-			
+			}
+
 			fileLinks.push_back(fileLink);
 		}
 
@@ -289,7 +275,7 @@ namespace EWF
 			_index += 2;
 			while (_index < fileContent.size())
 			{
-				if(_index == fileContent.size() - 1)
+				if (_index == fileContent.size() - 1)
 					System::errorMessage("-* Message flag not closed!-/*", true);
 
 				else if (!isEndMessageFlag(_index))
@@ -327,7 +313,7 @@ namespace EWF
 
 	void FileParser::defaultAllData()
 	{
-		for(size_t i = 0; i < readingFlagValue.size(); i++)
+		for (size_t i = 0; i < readingFlagValue.size(); i++)
 			readingFlagValue[i] = false;
 
 		customMessage = "";

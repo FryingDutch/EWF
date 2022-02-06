@@ -11,6 +11,35 @@ namespace EWF
 	DefaultScene SceneManager::defaultScene;
 	IntroScene SceneManager::introScene;
 
+	void SceneManager::applyStatsChanges(size_t _i)
+	{
+		for (size_t j = 0; j < FileParser::fileLinks[_i].variableChanges.size(); j++)
+		{
+			std::string variableToChange = FileParser::fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
+			char log_operator = FileParser::fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
+			uint32_t value = std::stoi(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]);
+
+			if (variableToChange == FileParser::variables[FileParser::HP])
+			{
+				switch (log_operator)
+				{
+				case '=':
+					Player::setHealth(value);
+					break;
+
+				case '+':
+					Player::setHealth(Player::getHealth() + value);
+					break;
+
+				case '-':
+					Player::setHealth(Player::getHealth() - value);
+					break;
+
+				}
+			}
+		}
+
+	}
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
@@ -30,7 +59,7 @@ namespace EWF
 
 		// TO-DO add more sceneTemplates to use.
 		default:
-			System::errorMessage("Not a valid sceneType");
+			System::errorMessage("Not a valid sceneType", true);
 			return;
 		}
 
@@ -41,7 +70,10 @@ namespace EWF
 			for (size_t j = 0; j < FileParser::fileLinks[i].boundChoices.size(); j++)
 			{
 				if (response == FileParser::fileLinks[i].boundChoices[j])
+				{
 					FileParser::filePath = FileParser::fileLinks[i].link; // if its a match, return the current link
+					applyStatsChanges(i);
+				}
 			}
 		}
 

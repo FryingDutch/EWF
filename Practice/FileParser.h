@@ -16,6 +16,7 @@ namespace EWF
 		{
 			std::string link;
 			std::vector<uint32_t> boundChoices;
+			std::vector<std::vector<std::string>> variableChanges;
 
 			FileLink() = default;
 		};
@@ -37,8 +38,14 @@ namespace EWF
 	public:
 		enum
 		{
+			NEW_VARIABLE = 0, LOGICAL_OPERATOR, VALUE
+		};
+
+		enum
+		{
 			HP = 0, ATK, DEF, AGE, NAME
 		};
+
 		enum
 		{
 			PLUS = 0, MINUS, EQUALS, VARIABLE
@@ -70,7 +77,7 @@ namespace EWF
 
 		static bool isSceneTypeFlag(size_t _index);
 		
-		static void handleVariableFlag(size_t& _index);
+		static std::vector<std::string> handleVariableFlag(size_t& _index);
 		static void handleFlags(size_t& _index);
 
 		static void loadText();
