@@ -13,20 +13,20 @@ namespace EWF
 
 	void SceneManager::applyStatsChanges(size_t _i)
 	{
-		for (size_t j = 0; j < FileParser::fileLinks[_i].variableChanges.size(); j++)
+		for (size_t j = 0; j < FileParser::m_fileLinks[_i].variableChanges.size(); j++)
 		{
-			std::string variableToChange = FileParser::fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
-			char log_operator = FileParser::fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
+			std::string variableToChange = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
+			char log_operator = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
 			uint32_t value{ 0 };
 			std::string valueStr{ "" };
 
-			if (System::isDigit(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]))
-				value = std::stoi(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]);
+			if (System::isDigit(FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE]))
+				value = std::stoi(FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE]);
 				
 			else
-				valueStr = FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE];
+				valueStr = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE];
 
-			if (variableToChange == FileParser::variables[FileParser::HP])
+			if (variableToChange == FileParser::m_variables[FileParser::HP])
 			{
 				switch (log_operator)
 				{
@@ -51,7 +51,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::variables[FileParser::AGE])
+			else if (variableToChange == FileParser::m_variables[FileParser::AGE])
 			{
 				switch (log_operator)
 				{
@@ -70,7 +70,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::variables[FileParser::ATK])
+			else if (variableToChange == FileParser::m_variables[FileParser::ATK])
 			{
 				switch (log_operator)
 				{
@@ -89,7 +89,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::variables[FileParser::DEF])
+			else if (variableToChange == FileParser::m_variables[FileParser::DEF])
 			{
 				switch (log_operator)
 				{
@@ -108,7 +108,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::variables[FileParser::MAXHP])
+			else if (variableToChange == FileParser::m_variables[FileParser::MAXHP])
 			{
 				switch (log_operator)
 				{
@@ -127,7 +127,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::variables[FileParser::NAME])
+			else if (variableToChange == FileParser::m_variables[FileParser::NAME])
 			{
 				if (!valueStr.empty() && valueStr != "RESPONSE")
 				{
@@ -154,17 +154,17 @@ namespace EWF
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
-		switch (FileParser::sceneType)
+		switch (FileParser::m_sceneType)
 		{
 		case INTRO:
-			introScene.setText(FileParser::textBlocks);
-			(FileParser::customMessage.size() > 0) ? introScene.render(FileParser::customMessage) : introScene.render(); // If custom message is found in file, render with that, otherwise default
+			introScene.setText(FileParser::m_textBlocks);
+			(FileParser::m_customMessage.size() > 0) ? introScene.render(FileParser::m_customMessage) : introScene.render(); // If custom message is found in file, render with that, otherwise default
 			response = 1;
 			break;
 
 		case DEFAULT:
-			defaultScene.setText(FileParser::textBlocks);
-			(FileParser::customMessage.size() > 0) ? defaultScene.render(FileParser::responseIsString, FileParser::customMessage) : defaultScene.render(FileParser::responseIsString, FileParser::message);
+			defaultScene.setText(FileParser::m_textBlocks);
+			(FileParser::m_customMessage.size() > 0) ? defaultScene.render(FileParser::m_responseIsString, FileParser::m_customMessage) : defaultScene.render(FileParser::m_responseIsString, FileParser::m_message);
 			response = defaultScene.getResponse();
 			break;
 
@@ -175,33 +175,33 @@ namespace EWF
 		}
 
 		// Set the next file to read.
-		if (FileParser::responseIsString)
+		if (FileParser::m_responseIsString)
 		{
-			FileParser::filePath = FileParser::fileLinks[0].link;
+			FileParser::m_filePath = FileParser::m_fileLinks[0].link;
 			applyStatsChanges(0);
 		}
 
 		else if (response == "0")
 		{
-			FileParser::filePath = "menu";
+			FileParser::m_filePath = "menu";
 		}
 
 		else
 		{
-			for (size_t i = 0; i < FileParser::fileLinks.size(); i++)
+			for (size_t i = 0; i < FileParser::m_fileLinks.size(); i++)
 			{
-				for (size_t j = 0; j < FileParser::fileLinks[i].boundChoices.size(); j++)
+				for (size_t j = 0; j < FileParser::m_fileLinks[i].boundChoices.size(); j++)
 				{
-					if (response == FileParser::fileLinks[i].boundChoices[j])
+					if (response == FileParser::m_fileLinks[i].boundChoices[j])
 					{
-						FileParser::filePath = FileParser::fileLinks[i].link; // if its a match, set the current link
+						FileParser::m_filePath = FileParser::m_fileLinks[i].link; // if its a match, set the current link
 						applyStatsChanges(i);
 					}
 				}
 			}
 		}
 
-		if(FileParser::fileLinks.size() <= 0)
+		if(FileParser::m_fileLinks.size() <= 0)
 			System::errorMessage("No file link bound to this choice", true);
 	}
 
@@ -210,7 +210,7 @@ namespace EWF
 		while (System::isRunning)
 		{
 			FileParser::loadText();
-			buildScene(FileParser::sceneType);
+			buildScene(FileParser::m_sceneType);
 		}
 	}
 }

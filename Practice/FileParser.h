@@ -7,11 +7,11 @@ namespace EWF
 	struct FileParser
 	{
 	private:
-		static char sceneType;
-		static std::string fileContent;
-		static size_t index;
-		static bool responseIsString;
-		static std::vector<std::string> textBlocks;
+		static char m_sceneType;
+		static std::string m_fileContent;
+		static size_t m_index;
+		static bool m_responseIsString;
+		static std::vector<std::string> m_textBlocks;
 
 		struct FileLink
 		{
@@ -22,16 +22,16 @@ namespace EWF
 			FileLink() = default;
 		};
 
-		static std::vector<FileLink> fileLinks;
-		static std::vector<bool> readingFlagValue;
-		static std::vector<std::string> variables;
+		static std::vector<FileLink> m_fileLinks;
+		static std::vector<bool> m_readingFlagValue;
+		static std::vector<std::string> m_variables;
 
-		static std::string block;
-		static std::string message;
-		static std::string customMessage;
+		static std::string m_block;
+		static std::string m_message;
+		static std::string m_customMessage;
 
-		static std::string goToFile;
-		static std::string filePath;
+		static std::string m_goToFile;
+		static std::string m_filePath;
 
 		static const uint32_t NUMOFOPERATORS;
 		static const char operators[];
@@ -77,6 +77,7 @@ namespace EWF
 
 		static bool isSceneTypeFlag();
 		
+		static bool isValidSceneType();
 		static void handleBlock();
 		static void handleFileLink();
 		static void handleMessage();
