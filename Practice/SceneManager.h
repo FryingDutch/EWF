@@ -9,7 +9,7 @@ namespace EWF
 	struct SceneManager
 	{
 	private:
-		static uint32_t response;
+		static std::string response;
 
 		static DefaultScene defaultScene;
 		static IntroScene introScene;

@@ -10,7 +10,7 @@ namespace EWF
 	uint32_t Player::defense;
 
 	std::string Player::name;
-	uint32_t Player::age;
+	uint32_t Player::age = 19;
 
 	bool Player::isMale;
 }

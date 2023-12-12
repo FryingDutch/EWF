@@ -8,7 +8,7 @@
 namespace EWF
 {
 
-	uint16_t DefaultScene::getResponse() { return response; }
+	std::string DefaultScene::getResponse() { return response; }
 	std::string DefaultScene::getText(uint32_t _index) { return text[_index]; }
 
 	DefaultScene::DefaultScene(std::vector<std::string> _text)
@@ -97,7 +97,7 @@ namespace EWF
 	}
 
 	// Renders the scene, customized trough arguments
-	void DefaultScene::render(std::string _message)
+	void DefaultScene::render(bool responseIsString, std::string _message)
 	{
 		static std::string answer;
 		static int32_t argc;
@@ -105,22 +105,38 @@ namespace EWF
 		do
 		{
 			// Clear the screen at start, or after a bad input
-			system("CLS");
+			system("cls");
 			printStatsBanner();
 			for (size_t i = 0; i < text.size(); i++)
 			{
 				// Check if the string provided is not the defaulted empty one
 				if (i < text.size() && !text[i].empty())
 				{
-					switch (i)
+					if (!responseIsString)
 					{
-					case STORY:
-						std::cout << text[STORY] << "\n\n";
-						break;
+						switch (i)
+						{
+						case STORY:
+							std::cout << text[STORY] << "\n\n";
+							break;
 
-					default:
-						std::cout << "\t" << i << ") " << text[i] << "\n";
-						break;
+						default:
+							std::cout << "\t" << i << ") " << text[i] << "\n";
+							break;
+						}
+					}
+
+					else
+					{
+						switch (i)
+						{
+						case STORY:
+							std::cout << text[STORY] << "\n\n";
+							break;
+
+						default:
+							break;
+						}
 					}
 				}
 
@@ -134,9 +150,16 @@ namespace EWF
 			std::cout << "\n";
 			answer = System::getInput(_message);
 
+			if (responseIsString)
+			{
+				response = answer;
+				break;
+			}
+				
+
 		} while (!System::isDigit(answer) || std::stoul(answer) >= text.size() || std::stoi(answer) < 0);
 
-		response = std::stoi(answer);
+		response = answer;
 	}
 }
 

@@ -9,13 +9,14 @@ namespace EWF
 	private:
 		static char sceneType;
 		static std::string fileContent;
-
+		static size_t index;
+		static bool responseIsString;
 		static std::vector<std::string> textBlocks;
 
 		struct FileLink
 		{
 			std::string link;
-			std::vector<uint32_t> boundChoices;
+			std::vector<std::string> boundChoices;
 			std::vector<std::vector<std::string>> variableChanges;
 
 			FileLink() = default;
@@ -43,7 +44,7 @@ namespace EWF
 
 		enum
 		{
-			HP = 0, ATK, DEF, AGE, NAME
+			HP = 0, ATK, DEF, AGE, NAME, MAXHP
 		};
 
 		enum
@@ -63,22 +64,25 @@ namespace EWF
 
 	public:
 		static void defaultAllData();
-		static bool isVariableFlag(size_t _index);
-		static bool isOperator(size_t _index);
+		static bool isVariableFlag();
 
-		static bool isStartMessageFlag(size_t _index);
-		static bool isEndMessageFlag(size_t _index);
+		static bool isStartMessageFlag();
+		static bool isEndMessageFlag();
 
-		static bool isStartBlockFlag(size_t _index);
-		static bool isEndBlockFlag(size_t _index);
+		static bool isStartBlockFlag();
+		static bool isEndBlockFlag();
 		
-		static bool isStartFileLinkFlag(size_t _index);
-		static bool isEndFileLinkFlag(size_t _index);
+		static bool isStartFileLinkFlag();
+		static bool isEndFileLinkFlag();
 
-		static bool isSceneTypeFlag(size_t _index);
+		static bool isSceneTypeFlag();
 		
-		static std::vector<std::string> handleVariableFlag(size_t& _index);
-		static void handleFlags(size_t& _index);
+		static void handleBlock();
+		static void handleFileLink();
+		static void handleMessage();
+		static void handleSceneType();
+		static std::vector<std::string> handleVariableFlag();
+		static void handleFlags();
 
 		static void loadText();
 

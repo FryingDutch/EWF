@@ -7,7 +7,7 @@ namespace EWF
 	class DefaultScene
 	{
 	protected:
-		uint16_t response{ 0 };
+		std::string response{ "" };
 		std::vector<std::string> text;
 
 	public:
@@ -22,9 +22,9 @@ namespace EWF
 		void setText(std::vector<std::string> _text);
 
 		void printStatsBanner();
-		void render(std::string _message = "Make a choice: ");
+		void render(bool responseIsString = false, std::string _message = "Make a choice: ");
 
-		uint16_t getResponse();
+		std::string getResponse();
 		std::string getText(uint32_t index);
 	};
 }

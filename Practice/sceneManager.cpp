@@ -6,7 +6,7 @@
 
 namespace EWF
 {
-	uint32_t SceneManager::response = 0;
+	std::string SceneManager::response = "";
 
 	DefaultScene SceneManager::defaultScene;
 	IntroScene SceneManager::introScene;
@@ -17,8 +17,9 @@ namespace EWF
 		{
 			std::string variableToChange = FileParser::fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
 			char log_operator = FileParser::fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
-			int32_t value;
+			uint32_t value{ 0 };
 			std::string valueStr{ "" };
+
 			if (System::isDigit(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]))
 				value = std::stoi(FileParser::fileLinks[_i].variableChanges[j][FileParser::VALUE]);
 				
@@ -107,9 +108,28 @@ namespace EWF
 				}
 			}
 
+			else if (variableToChange == FileParser::variables[FileParser::MAXHP])
+			{
+				switch (log_operator)
+				{
+				case '=':
+					Player::setMaxHealth(value);
+					break;
+
+				case '+':
+					Player::setMaxHealth(Player::getMaxHealth() + value);
+					break;
+
+				case '-':
+					((Player::getMaxHealth() - value) < 1) ? Player::setMaxHealth(1) : Player::setMaxHealth(Player::getMaxHealth() - value);
+					break;
+
+				}
+			}
+
 			else if (variableToChange == FileParser::variables[FileParser::NAME])
 			{
-				if (!valueStr.empty())
+				if (!valueStr.empty() && valueStr != "RESPONSE")
 				{
 					switch (log_operator)
 					{
@@ -121,6 +141,10 @@ namespace EWF
 						System::errorMessage("Not a valid operator for NAME");
 						break;
 					}
+				}
+
+				else if(valueStr == "RESPONSE"){
+					Player::setName(response);
 				}
 			}
 
@@ -134,13 +158,13 @@ namespace EWF
 		{
 		case INTRO:
 			introScene.setText(FileParser::textBlocks);
-			(FileParser::customMessage.size() > 0) ? introScene.render(FileParser::customMessage) : introScene.render(FileParser::message); // If custom message is found in file, render with that, otherwise default
+			(FileParser::customMessage.size() > 0) ? introScene.render(FileParser::customMessage) : introScene.render(); // If custom message is found in file, render with that, otherwise default
 			response = 1;
 			break;
 
 		case DEFAULT:
 			defaultScene.setText(FileParser::textBlocks);
-			(FileParser::customMessage.size() > 0) ? defaultScene.render(FileParser::customMessage) : defaultScene.render(FileParser::message);
+			(FileParser::customMessage.size() > 0) ? defaultScene.render(FileParser::responseIsString, FileParser::customMessage) : defaultScene.render(FileParser::responseIsString, FileParser::message);
 			response = defaultScene.getResponse();
 			break;
 
@@ -151,21 +175,31 @@ namespace EWF
 		}
 
 		// Set the next file to read.
-		for (size_t i = 0; i < FileParser::fileLinks.size(); i++)
+		if (FileParser::responseIsString)
 		{
-			// Go trough all links, check the bound choices
-			for (size_t j = 0; j < FileParser::fileLinks[i].boundChoices.size(); j++)
+			FileParser::filePath = FileParser::fileLinks[0].link;
+			applyStatsChanges(0);
+		}
+
+		else if (response == "0")
+		{
+			FileParser::filePath = "menu";
+		}
+
+		else
+		{
+			for (size_t i = 0; i < FileParser::fileLinks.size(); i++)
 			{
-				if (response == FileParser::fileLinks[i].boundChoices[j])
+				for (size_t j = 0; j < FileParser::fileLinks[i].boundChoices.size(); j++)
 				{
-					FileParser::filePath = FileParser::fileLinks[i].link; // if its a match, return the current link
-					applyStatsChanges(i);
+					if (response == FileParser::fileLinks[i].boundChoices[j])
+					{
+						FileParser::filePath = FileParser::fileLinks[i].link; // if its a match, set the current link
+						applyStatsChanges(i);
+					}
 				}
 			}
 		}
-
-		// else if ((response - 1) = 0)
-			// Go to menu
 
 		if(FileParser::fileLinks.size() <= 0)
 			System::errorMessage("No file link bound to this choice", true);

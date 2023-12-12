@@ -19,7 +19,9 @@ namespace EWF
 		std::cerr << "[ERROR]: " << message << "!" << terminatingText;
 
 		if (!isRunning)
+		{
 			exit(EXIT_FAILURE);
+		}
 	}
 
 	std::string System::getWorkingDirectory()
@@ -28,7 +30,7 @@ namespace EWF
 		return wd;
 	}
 
-	std::string System::readFile(const char* _name)
+	std::string System::readFileIntoString(const char* _name)
 	{
 		std::ostringstream ss;
 
@@ -48,13 +50,19 @@ namespace EWF
 	bool System::isDigit(std::string str)
 	{
 		if (str.empty())
+		{
 			return false;
+		}
+			
 
 		for (size_t i = 0; i < str.length(); i++)
 		{
 			if (!std::isdigit(str[i]))
+			{
 				return false;
+			}
 		}
+
 		return true;
 	}
 
