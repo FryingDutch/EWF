@@ -66,6 +66,8 @@ namespace EWF
 		static void defaultAllData();
 		static bool isVariableFlag();
 
+		static bool isFlag(std::string, int startFlagToCheck);
+
 		static bool isStartMessageFlag();
 		static bool isEndMessageFlag();
 

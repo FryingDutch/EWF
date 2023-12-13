@@ -42,107 +42,66 @@ namespace EWF
 		return false;
 	}
 
-	bool FileParser::isStartMessageFlag()
+	bool FileParser::isFlag(std::string flag, int startFlagToCheck = -1)
 	{
-		if (m_index + 1 < m_fileContent.size()
-			&& std::all_of(m_readingFlagValue.begin(), m_readingFlagValue.end(), std::logical_not<bool>())
-			&& m_fileContent[m_index] == '-'
-			&& m_fileContent[m_index + 1] == '*')
-		{
-			m_index += 2;
+		uint32_t flagSize = flag.size();
+		std::string currentBlock = m_fileContent.substr(m_index, flag.size());
+
+		bool enoughCharsLeftToRead = ((m_index + flagSize) < m_fileContent.size());
+		std::vector flagsToCheck = m_readingFlagValue;
+		bool noStartFlagToCheck = startFlagToCheck == -1;
+
+		if (!noStartFlagToCheck) {
+			flagsToCheck.erase(flagsToCheck.begin() + startFlagToCheck);
+		}
+
+		bool notReadingOtherFlags = std::all_of(flagsToCheck.begin(), flagsToCheck.end(), std::logical_not<bool>());
+		bool currentBlockEqualsFlag = (currentBlock == flag);
+		bool readingCurrentFlag = (noStartFlagToCheck) ? false : m_readingFlagValue[startFlagToCheck];
+
+		if (enoughCharsLeftToRead && notReadingOtherFlags && currentBlockEqualsFlag) {
+			if (flag != "#") { // TO-DO: Find out why this flag doesnt need to move.
+				m_index += flagSize;
+			}
 			return true;
 		}
 
 		return false;
+	}
+
+	bool FileParser::isStartMessageFlag()
+	{
+		return FileParser::isFlag("-*");
 	}
 
 	bool FileParser::isEndMessageFlag()
 	{
-		if (m_index + 2 < m_fileContent.size()
-			&& m_readingFlagValue[FLAG::MESSAGE]
-			&& m_fileContent[m_index] == '-'
-			&& m_fileContent[m_index + 1] == '/'
-			&& m_fileContent[m_index + 2] == '*')
-		{
-			m_index += 3;
-			return true;
-		}
-
-		return false;
+		return FileParser::isFlag("-/*", FLAG::MESSAGE);
 	}
 
 	bool FileParser::isStartBlockFlag()
 	{
-		static const int FLAG_SIZE = std::string("<>").size();
-		if (m_index + 1 < m_fileContent.size()
-			&& std::all_of(m_readingFlagValue.begin(), m_readingFlagValue.end(), std::logical_not<bool>())
-			&& m_fileContent[m_index] == '<'
-			&& m_fileContent[m_index + 1] == '>')
-		{
-			m_index += FLAG_SIZE;
-			return true;
-		}
-
-		return false;
+		return FileParser::isFlag("<>");
 	}
 
 	bool FileParser::isEndBlockFlag()
 	{
-		static const int FLAG_SIZE = std::string("</>").size();
-		if (m_readingFlagValue[FLAG::BLOCK]
-			&& m_index + 2 < m_fileContent.size()
-			&& m_fileContent[m_index] == '<'
-			&& m_fileContent[m_index + 1] == '/'
-			&& m_fileContent[m_index + 2] == '>')
-		{
-			m_index += FLAG_SIZE;
-			return true;
-		}
-
-		return false;
+		return FileParser::isFlag("</>", FLAG::BLOCK);
 	}
 
 	bool FileParser::isStartFileLinkFlag()
 	{
-		if (std::all_of(m_readingFlagValue.begin(), m_readingFlagValue.end(), std::logical_not<bool>()) 
-			&& m_fileContent[m_index] == '#' 
-			&& (m_index + 1) < m_fileContent.size() 
-			&& std::isdigit(m_fileContent[m_index + 1]))
-		{
-			return true;
-		}
-
-		return false;
+		return FileParser::isFlag("#");
 	}
 
 	bool FileParser::isEndFileLinkFlag()
 	{
-		static const int FLAG_SIZE = std::string("#!").size();
-		if (m_readingFlagValue[FLAG::FILELINK]
-			&& (m_index + 2) < m_fileContent.size()
-			&& !m_readingFlagValue[FLAG::BLOCK]
-			&& m_fileContent[m_index] == ' '
-			&& m_fileContent[m_index + 1] == '#'
-			&& m_fileContent[m_index + 2] == '!')
-		{
-			m_index += FLAG_SIZE;
-			return true;
-		}
-
-		return false;
+		return FileParser::isFlag("#!", FLAG::FILELINK);
 	}
 
 	bool FileParser::isSceneTypeFlag()
 	{
-		if (std::all_of(m_readingFlagValue.begin(), m_readingFlagValue.end(), std::logical_not<bool>()) 
-			&& m_fileContent[m_index] == '~' 
-			&& m_index < (m_fileContent.size() - 1) 
-			&& !std::isdigit(m_fileContent[m_index] == '~'))
-		{
-			m_index += 1;
-			return true;
-		}
-		return false;
+		return FileParser::isFlag("~");
 	}
 
 	void FileParser::handleBlock()
