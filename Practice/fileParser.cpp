@@ -60,9 +60,7 @@ namespace EWF
 		bool readingCurrentFlag = (noStartFlagToCheck) ? false : m_readingFlagValue[startFlagToCheck];
 
 		if (enoughCharsLeftToRead && notReadingOtherFlags && currentBlockEqualsFlag) {
-			if (flag != "#") { // TO-DO: Find out why this flag doesnt need to move.
-				m_index += flagSize;
-			}
+			m_index += flagSize;
 			return true;
 		}
 
@@ -134,7 +132,7 @@ namespace EWF
 		static const char MULTI_CHOICE_OPERATOR = ',';
 
 		// Until the maximum allowed of elements, keep looping, adding 2 to position to get the digit we need.
-		for (m_index += 1; m_index <= m_fileContent.size(); m_index += 2)
+		for (m_index += 0; m_index <= m_fileContent.size(); m_index += 2)
 		{
 			// if the second position of the element [#1][,2][,3] is a digit
 			if ((m_index + 2) < m_fileContent.size() && std::isdigit(m_fileContent[m_index]))
