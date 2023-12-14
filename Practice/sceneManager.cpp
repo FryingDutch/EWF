@@ -26,7 +26,7 @@ namespace EWF
 			else
 				valueStr = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE];
 
-			if (variableToChange == FileParser::m_variables[FileParser::HP])
+			if (variableToChange == FileParser::m_variablesMap["health"])
 			{
 				switch (log_operator)
 				{
@@ -51,7 +51,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variables[FileParser::AGE])
+			else if (variableToChange == FileParser::m_variablesMap["age"])
 			{
 				switch (log_operator)
 				{
@@ -70,7 +70,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variables[FileParser::ATK])
+			else if (variableToChange == FileParser::m_variablesMap["attack"])
 			{
 				switch (log_operator)
 				{
@@ -89,7 +89,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variables[FileParser::DEF])
+			else if (variableToChange == FileParser::m_variablesMap["defense"])
 			{
 				switch (log_operator)
 				{
@@ -108,7 +108,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variables[FileParser::MAXHP])
+			else if (variableToChange == FileParser::m_variablesMap["maximum-health"])
 			{
 				switch (log_operator)
 				{
@@ -127,7 +127,7 @@ namespace EWF
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variables[FileParser::NAME])
+			else if (variableToChange == FileParser::m_variablesMap["name"])
 			{
 				if (!valueStr.empty() && valueStr != "RESPONSE")
 				{

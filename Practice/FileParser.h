@@ -1,18 +1,13 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <map>
 
 namespace EWF
 {
 	struct FileParser
 	{
 	private:
-		static char m_sceneType;
-		static std::string m_fileContent;
-		static size_t m_index;
-		static bool m_responseIsString;
-		static std::vector<std::string> m_textBlocks;
-
 		struct FileLink
 		{
 			std::string link;
@@ -22,9 +17,17 @@ namespace EWF
 			FileLink() = default;
 		};
 
+		static char m_sceneType;
+		static std::string m_fileContent;
+		static size_t m_index;
+		static bool m_responseIsString;
+		static std::vector<std::string> m_textBlocks;
+		static std::map<std::string, char> operatorsMap;
+		static std::map<std::string, std::string> m_variablesMap;
+		static std::map<std::string, bool> m_readingFlagValueMap;
+
 		static std::vector<FileLink> m_fileLinks;
 		static std::vector<bool> m_readingFlagValue;
-		static std::vector<std::string> m_variables;
 
 		static std::string m_block;
 		static std::string m_message;
@@ -33,23 +36,12 @@ namespace EWF
 		static std::string m_goToFile;
 		static std::string m_filePath;
 
-		static const uint32_t NUMOFOPERATORS;
-		static const char operators[];
-
 	public:
+		FileParser();
+		
 		enum
 		{
 			NEW_VARIABLE = 0, LOGICAL_OPERATOR, VALUE
-		};
-
-		enum
-		{
-			HP = 0, ATK, DEF, AGE, NAME, MAXHP
-		};
-
-		enum
-		{
-			PLUS = 0, MINUS, EQUALS, VARIABLE
 		};
 
 		enum : char
@@ -66,7 +58,7 @@ namespace EWF
 		static void defaultAllData();
 		static bool isVariableFlag();
 
-		static bool isFlag(std::string, int startFlagToCheck);
+		static bool isFlag(std::string flag, std::vector<std::string> flagsToIgnore, bool disableFlagCheck);
 
 		static bool isStartMessageFlag();
 		static bool isEndMessageFlag();

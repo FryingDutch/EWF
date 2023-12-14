@@ -2,6 +2,7 @@
 #include "FileParser.h"
 #include <functional>
 #include <algorithm>
+#include <map>
 #include "Player.h"
 
 namespace EWF
@@ -12,7 +13,29 @@ namespace EWF
 
 	std::vector<FileParser::FileLink> FileParser::m_fileLinks;
 	std::vector<bool> FileParser::m_readingFlagValue{ false, false, false, false };
-	std::vector<std::string> FileParser::m_variables{ "HP", "ATK", "DEF", "AGE", "NAME", "MAXHP"};
+
+	std::map<std::string, bool> FileParser::m_readingFlagValueMap = {
+		{"block", false},
+		{"message", false},
+		{"filelink", false},
+		{"scenetype", false}
+	};
+
+	std::map<std::string, std::string> FileParser::m_variablesMap = {
+		{"name", "NAME"},
+		{"age", "AGE"},
+		{"health", "HP"},
+		{"maximum-health", "MAXHP"},
+		{"attack", "ATK"},
+		{"defense", "DEF"}
+	};
+
+	std::map<std::string, char> FileParser::operatorsMap = {
+		{"plus", '+'},
+		{"minus", '-'},
+		{"equals", '='},
+		{"variable", '$'}
+	};
 
 	char FileParser::m_sceneType;
 	std::string FileParser::m_filePath = "first-scene";
@@ -25,46 +48,63 @@ namespace EWF
 	size_t FileParser::m_index = 0;
 	bool FileParser::m_responseIsString{ false };
 
-	const uint32_t FileParser::NUMOFOPERATORS = 4;
-	const char FileParser::operators[NUMOFOPERATORS] = { '+', '-', '=', '$' };
+	FileParser::FileParser() 
+	{};
 
-	bool FileParser::isVariableFlag()
-	{
-		if (m_index + 1 < m_fileContent.size() 
-			&& (m_fileContent[m_index] == operators[VARIABLE] 
-				&& m_fileContent[m_index + 1] != ' ' 
-				&& m_fileContent[m_index + 1] != '\n' 
-				&& !std::isdigit(m_fileContent[m_index + 1]))
-			){
-			return true;
-		}
 
-		return false;
-	}
-
-	bool FileParser::isFlag(std::string flag, int startFlagToCheck = -1)
+	/// <summary>
+	/// Checks whether or not the current char in the file is the start of a flag
+	/// </summary>
+	/// <param name="flag">The string representation of the flag to check</param>
+	/// <param name="startFlagToCheck">Defaults to -1 for no starting flag checking, this param is the index of the flag to be removed for checking</param>
+	/// <param name="disableFlagCheck">This makes the function not check any other flags for reading, this is for variable checking spefic</param>
+	/// <todo>This is way too comlex and too spefic to support each flag, needs to be generalised</todo>
+	/// <returns>boolean</returns>
+	bool FileParser::isFlag(std::string flag, std::vector<std::string> flagsToIgnore = {}, bool disableFlagCheck = false)
 	{
 		uint32_t flagSize = flag.size();
 		std::string currentBlock = m_fileContent.substr(m_index, flag.size());
 
 		bool enoughCharsLeftToRead = ((m_index + flagSize) < m_fileContent.size());
 		std::vector flagsToCheck = m_readingFlagValue;
-		bool noStartFlagToCheck = startFlagToCheck == -1;
+		bool readingOtherFlags = false;
+		bool ignoreOtherFlags = flagsToIgnore.size() <= 0 || disableFlagCheck;
 
-		if (!noStartFlagToCheck) {
-			flagsToCheck.erase(flagsToCheck.begin() + startFlagToCheck);
+		if (!ignoreOtherFlags) {
+			for (const auto& keyValue : FileParser::m_readingFlagValueMap) {
+				std::string flagKey = keyValue.first;
+				bool flagIsBeingRead = keyValue.second;
+				bool ignoreFlag = false;
+
+				for (size_t i = 0; i < flagsToIgnore.size(); i++) {
+					if (flagKey == flagsToIgnore[i])
+					{
+						ignoreFlag = true;
+					}
+				}
+
+				if (!ignoreFlag && flagIsBeingRead) {
+					readingOtherFlags = true;
+					break;
+				}
+			}
 		}
 
-		bool notReadingOtherFlags = std::all_of(flagsToCheck.begin(), flagsToCheck.end(), std::logical_not<bool>());
 		bool currentBlockEqualsFlag = (currentBlock == flag);
-		bool readingCurrentFlag = (noStartFlagToCheck) ? false : m_readingFlagValue[startFlagToCheck];
 
-		if (enoughCharsLeftToRead && notReadingOtherFlags && currentBlockEqualsFlag) {
-			m_index += flagSize;
+		if (enoughCharsLeftToRead && !readingOtherFlags && currentBlockEqualsFlag) {
+			if (flag != std::string(1, operatorsMap["variable"])) {
+				m_index += flagSize;
+			}
 			return true;
 		}
 
 		return false;
+	}
+
+	bool FileParser::isVariableFlag()
+	{
+		return FileParser::isFlag(std::string(1, operatorsMap["variable"]), {}, true);
 	}
 
 	bool FileParser::isStartMessageFlag()
@@ -74,7 +114,7 @@ namespace EWF
 
 	bool FileParser::isEndMessageFlag()
 	{
-		return FileParser::isFlag("-/*", FLAG::MESSAGE);
+		return FileParser::isFlag("-/*", {"message"});
 	}
 
 	bool FileParser::isStartBlockFlag()
@@ -84,7 +124,7 @@ namespace EWF
 
 	bool FileParser::isEndBlockFlag()
 	{
-		return FileParser::isFlag("</>", FLAG::BLOCK);
+		return FileParser::isFlag("</>", { "block" });
 	}
 
 	bool FileParser::isStartFileLinkFlag()
@@ -94,7 +134,7 @@ namespace EWF
 
 	bool FileParser::isEndFileLinkFlag()
 	{
-		return FileParser::isFlag("#!", FLAG::FILELINK);
+		return FileParser::isFlag("#!", {"filelink"});
 	}
 
 	bool FileParser::isSceneTypeFlag()
@@ -104,7 +144,7 @@ namespace EWF
 
 	void FileParser::handleBlock()
 	{
-		m_readingFlagValue[FLAG::BLOCK] = true;
+		m_readingFlagValueMap["block"] = true;
 		while (!isEndBlockFlag())
 		{
 			// if at end of file and block is still being read
@@ -118,14 +158,14 @@ namespace EWF
 			m_index++;
 		}
 
-		m_readingFlagValue[FLAG::BLOCK] = false;
+		m_readingFlagValueMap["block"] = false;
 		m_textBlocks.push_back(m_block);
 		m_block = "";
 	}
 
 	void FileParser::handleFileLink()
 	{
-		m_readingFlagValue[FLAG::FILELINK] = true;
+		m_readingFlagValueMap["filelink"] = true;
 
 		// Create a fileLink to be filled with both the choices as well as the link and variable changes.
 		FileLink fileLink;
@@ -167,8 +207,9 @@ namespace EWF
 			if (readingVariables)
 			{
 				std::vector<std::string> variableChange = handleVariableFlag();
-				if (!variableChange.empty())
+				if (!variableChange.empty()) {
 					fileLink.variableChanges.push_back(variableChange);
+				}
 			}
 
 			if (!isEndFileLinkFlag())
@@ -180,7 +221,9 @@ namespace EWF
 				}
 
 				else if (m_fileContent[m_index] == ' ')
+				{
 					m_index++;
+				}
 
 				else
 				{
@@ -191,7 +234,7 @@ namespace EWF
 
 			else
 			{
-				m_readingFlagValue[FLAG::FILELINK] = false;
+				m_readingFlagValueMap["filelink"] = false;
 				break;
 			}
 		}
@@ -201,7 +244,7 @@ namespace EWF
 
 	void FileParser::handleMessage()
 	{
-		m_readingFlagValue[FLAG::MESSAGE] = true;
+		FileParser::m_readingFlagValueMap["message"] = true;
 
 		// Add 2 to index to pass the flag and start reading on the next element
 		while (m_index < m_fileContent.size())
@@ -217,7 +260,7 @@ namespace EWF
 
 			else
 			{
-				m_readingFlagValue[FLAG::MESSAGE] = false;
+				FileParser::m_readingFlagValueMap["message"] = false;
 				break;
 			}
 		}
@@ -255,14 +298,18 @@ namespace EWF
 
 			for (; m_index + 1 < m_fileContent.size(); m_index++)
 			{
-				for (size_t i = 0; i < NUMOFOPERATORS; i++)
-				{
-					if (m_fileContent[m_index + 1] == operators[i])
+				for (const auto& keyValue : operatorsMap) {
+					if (m_fileContent[m_index + 1] == keyValue.second)
+					{
 						isOperator = true;
+					}
 				}
 
+
 				if (m_fileContent[m_index + 1] == ' ' || m_fileContent[m_index + 1] == '\n')
+				{
 					System::errorMessage("Unused variable", true);
+				}
 
 				else if (isOperator && m_fileContent[m_index + 2] != ' ' && m_fileContent[m_index + 2] != '\n')
 				{
@@ -272,7 +319,9 @@ namespace EWF
 				}
 
 				else
+				{
 					variable.push_back(m_fileContent[m_index + 1]);
+				}
 			}
 
 			std::string value = "";
@@ -317,7 +366,7 @@ namespace EWF
 	void FileParser::loadText()
 	{
 		// clear all data of last scene
-		defaultAllData();
+		FileParser::defaultAllData();
 
 		// Construct the path for the next file
 		m_goToFile = System::getWorkingDirectory() + "\\scenes\\" + m_filePath + ".txt";
