@@ -27,7 +27,6 @@ namespace EWF
 		static std::map<std::string, bool> m_readingFlagValueMap;
 
 		static std::vector<FileLink> m_fileLinks;
-		static std::vector<bool> m_readingFlagValue;
 
 		static std::string m_block;
 		static std::string m_message;

@@ -12,7 +12,6 @@ namespace EWF
 	std::vector<std::string> FileParser::m_textBlocks;
 
 	std::vector<FileParser::FileLink> FileParser::m_fileLinks;
-	std::vector<bool> FileParser::m_readingFlagValue{ false, false, false, false };
 
 	std::map<std::string, bool> FileParser::m_readingFlagValueMap = {
 		{"block", false},
@@ -66,9 +65,8 @@ namespace EWF
 		std::string currentBlock = m_fileContent.substr(m_index, flag.size());
 
 		bool enoughCharsLeftToRead = ((m_index + flagSize) < m_fileContent.size());
-		std::vector flagsToCheck = m_readingFlagValue;
 		bool readingOtherFlags = false;
-		bool ignoreOtherFlags = flagsToIgnore.size() <= 0 || disableFlagCheck;
+		bool ignoreOtherFlags = flagsToIgnore.size() >= 0 || disableFlagCheck;
 
 		if (!ignoreOtherFlags) {
 			for (const auto& keyValue : FileParser::m_readingFlagValueMap) {
@@ -348,8 +346,9 @@ namespace EWF
 
 	void FileParser::defaultAllData()
 	{
-		for (size_t i = 0; i < m_readingFlagValue.size(); i++)
-			m_readingFlagValue[i] = false;
+		for (auto& keyValue : FileParser::m_readingFlagValueMap) {
+			keyValue.second = false;
+		}
 
 		m_customMessage = "";
 
