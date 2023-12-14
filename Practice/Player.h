@@ -3,6 +3,7 @@
 #include <vector>
 #include "Entity.h"
 #include "Item.h"
+#include <map>
 
 namespace EWF
 {
@@ -19,7 +20,8 @@ namespace EWF
 		static std::string name;
 		static uint32_t age;
 
-		static std::vector<Item> items;
+		static std::map<std::string, Item> items;
+		static std::vector<std::string> items2;
 
 	public:
 		static bool isMale;
@@ -37,16 +39,16 @@ namespace EWF
 		static uint32_t getMaxHealth() { return maxHealth; }
 		static void setMaxHealth(uint32_t _maxHealth) { maxHealth = _maxHealth; }
 
+		static void addItem(Item _item) { items[_item.getName()] = _item; }
+		static void setItemActive(std::string itemName) { items[itemName].setOwned(true); }
+
+		static Item getItem(std::string _item) { return items[_item]; }
+		static std::map<std::string, Item> getItems() { return items; }
+
 		static uint32_t getAttack() { return health; }
 		static void setAttack(uint32_t _attack) { attack = _attack; }
 
 		static uint32_t getDefense() { return defense; }
 		static void setDefense(uint32_t _defense) { defense = _defense; }
-
-		static void grabItem(Item _item)
-		{
-			_item.owned = true;
-			items.push_back(_item);
-		}
 	};
 }

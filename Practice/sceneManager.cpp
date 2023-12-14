@@ -3,6 +3,7 @@
 #include "IntroScene.h"
 #include "SceneManager.h"
 #include "FileParser.h"
+#include "ItemImporter.h"
 
 namespace EWF
 {
@@ -127,6 +128,11 @@ namespace EWF
 				}
 			}
 
+			else if (variableToChange == FileParser::m_variablesMap["get-item"])
+			{
+				Player::setItemActive(valueStr);
+			}
+
 			else if (variableToChange == FileParser::m_variablesMap["name"])
 			{
 				if (!valueStr.empty() && valueStr != "RESPONSE")
@@ -207,6 +213,7 @@ namespace EWF
 
 	void SceneManager::runGame()
 	{
+		ItemImporter::import();
 		while (System::isRunning)
 		{
 			FileParser::loadText();

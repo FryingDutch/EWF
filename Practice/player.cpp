@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <map>
 
 namespace EWF
 {
@@ -13,4 +14,7 @@ namespace EWF
 	uint32_t Player::age = 19;
 
 	bool Player::isMale;
+
+	std::map<std::string, Item> Player::items;
+	std::vector<std::string> Player::items2 = {};
 }

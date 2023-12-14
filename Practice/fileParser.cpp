@@ -26,7 +26,9 @@ namespace EWF
 		{"health", "HP"},
 		{"maximum-health", "MAXHP"},
 		{"attack", "ATK"},
-		{"defense", "DEF"}
+		{"defense", "DEF"},
+		{"use-item", "USEITEM"},
+		{"get-item", "GETITEM"}
 	};
 
 	std::map<std::string, char> FileParser::operatorsMap = {
@@ -170,7 +172,7 @@ namespace EWF
 		static const char MULTI_CHOICE_OPERATOR = ',';
 
 		// Until the maximum allowed of elements, keep looping, adding 2 to position to get the digit we need.
-		for (m_index += 0; m_index <= m_fileContent.size(); m_index += 2)
+		for (; m_index <= m_fileContent.size(); m_index += 2)
 		{
 			// if the second position of the element [#1][,2][,3] is a digit
 			if ((m_index + 2) < m_fileContent.size() && std::isdigit(m_fileContent[m_index]))
@@ -334,10 +336,12 @@ namespace EWF
 						value.push_back(m_fileContent[m_index]);
 				}
 			}
-			std::string charStr(1, logic_operator);
-			if (value == "RESPONSE")
-				FileParser::m_responseIsString = true;
 
+			std::string charStr(1, logic_operator);
+			if (value == "RESPONSE") 
+			{
+				FileParser::m_responseIsString = true;
+			}
 			variableBuildUp = { variable, charStr, value };
 		}
 
