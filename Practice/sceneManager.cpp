@@ -22,10 +22,14 @@ namespace EWF
 			std::string valueStr{ "" };
 
 			if (System::isDigit(FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE]))
+			{
 				value = std::stoi(FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE]);
-				
-			else
+			}
+
+			else 
+			{
 				valueStr = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE];
+			}
 
 			if (variableToChange == FileParser::m_variablesMap["health"])
 			{
@@ -164,13 +168,19 @@ namespace EWF
 		{
 		case INTRO:
 			introScene.setText(FileParser::m_textBlocks);
-			(FileParser::m_customMessage.size() > 0) ? introScene.render(FileParser::m_customMessage) : introScene.render(); // If custom message is found in file, render with that, otherwise default
+			(FileParser::m_customMessage.size() > 0) 
+				? introScene.render(FileParser::m_customMessage) 
+				: introScene.render(); // If custom message is found in file, render with that, otherwise default
+
 			response = 1;
 			break;
 
 		case DEFAULT:
 			defaultScene.setText(FileParser::m_textBlocks);
-			(FileParser::m_customMessage.size() > 0) ? defaultScene.render(FileParser::m_responseIsString, FileParser::m_customMessage) : defaultScene.render(FileParser::m_responseIsString, FileParser::m_message);
+			(FileParser::m_customMessage.size() > 0) 
+				? defaultScene.render(FileParser::m_responseIsString, FileParser::m_customMessage) 
+				: defaultScene.render(FileParser::m_responseIsString, FileParser::m_message);
+
 			response = defaultScene.getResponse();
 			break;
 
@@ -213,11 +223,13 @@ namespace EWF
 
 	void SceneManager::runGame()
 	{
-		ItemImporter::import();
-		while (System::isRunning)
+		if (ItemImporter::import()) 
 		{
-			FileParser::loadText();
-			buildScene(FileParser::m_sceneType);
+			while (System::isRunning)
+			{
+				FileParser::loadText();
+				buildScene(FileParser::m_sceneType);
+			}
 		}
 	}
 }

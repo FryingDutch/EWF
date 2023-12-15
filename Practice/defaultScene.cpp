@@ -60,7 +60,7 @@ namespace EWF
 		// Add the player name
 		thirdRowStats += Player::getName();
 
-		// Add a white space of bannerwidth divided by 3, and a 8 to that only for styling, and retract whatever space the name takes up. 
+		// Add a white space of bannerwidth divided by 3, and add 8 to that only for styling, and retract whatever space the name takes up. 
 		for (size_t i = 0; i < ((bannerWidth / 3) + 8) - (Player::getName().size()); i++)
 			thirdRowStats += " ";
 

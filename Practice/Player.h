@@ -41,8 +41,19 @@ namespace EWF
 
 		static void addItem(Item _item) { items[_item.getName()] = _item; }
 		static void setItemActive(std::string itemName) { items[itemName].setOwned(true); }
-
 		static Item getItem(std::string _item) { return items[_item]; }
+		static Item getItemIfOwned(std::string _item) 
+		{ 
+			Item item;
+
+			if (items[_item].getOwned())
+			{
+				item = items[_item];
+			}
+
+			return item;
+		}
+
 		static std::map<std::string, Item> getItems() { return items; }
 
 		static uint32_t getAttack() { return health; }
