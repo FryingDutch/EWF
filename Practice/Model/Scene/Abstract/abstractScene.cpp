@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include "AbstractScene.h"
-#include "../../../Player.h"
+#include "../../../Model/Player/Player.h"
 
 namespace EWF {
 	// Renders the banner holding all the statistics

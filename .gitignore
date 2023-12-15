@@ -2,3 +2,5 @@ Practice/Debug/*
 Debug/*
 .vs/
 Practice/scenes
+Practice/Release/Practice.tlog
+Practice/Release

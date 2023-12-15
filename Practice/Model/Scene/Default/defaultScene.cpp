@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "../../../System.h"
-#include "../../../Player.h"
-#include "../../../SceneManager.h"
+#include "../../../System/System.h"
+#include "../../../Model/Player/Player.h"
+#include "../../../Manager/Scene/SceneManager.h"
 
 namespace EWF
 {
