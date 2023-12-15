@@ -2,7 +2,6 @@
 #include <string>
 #include "System.h"
 #include "DefaultScene.h"
-#include "IntroScene.h"
 
 namespace EWF
 {
@@ -12,7 +11,6 @@ namespace EWF
 		static std::string response;
 
 		static DefaultScene defaultScene;
-		static IntroScene introScene;
 
 	public:
 		enum : char

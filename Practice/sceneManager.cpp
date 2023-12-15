@@ -1,6 +1,5 @@
 #include <string>
 #include "DefaultScene.h"
-#include "IntroScene.h"
 #include "SceneManager.h"
 #include "FileParser.h"
 #include "ItemImporter.h"
@@ -10,7 +9,6 @@ namespace EWF
 	std::string SceneManager::response = "";
 
 	DefaultScene SceneManager::defaultScene;
-	IntroScene SceneManager::introScene;
 
 	void SceneManager::applyStatsChanges(size_t _i)
 	{
@@ -166,15 +164,6 @@ namespace EWF
 	{
 		switch (FileParser::m_sceneType)
 		{
-		case INTRO:
-			introScene.setText(FileParser::m_textBlocks);
-			(FileParser::m_customMessage.size() > 0) 
-				? introScene.render(FileParser::m_customMessage) 
-				: introScene.render(); // If custom message is found in file, render with that, otherwise default
-
-			response = 1;
-			break;
-
 		case DEFAULT:
 			defaultScene.setText(FileParser::m_textBlocks);
 			(FileParser::m_customMessage.size() > 0) 

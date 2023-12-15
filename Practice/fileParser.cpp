@@ -268,7 +268,7 @@ namespace EWF
 
 	bool FileParser::isValidSceneType()
 	{
-		return (m_sceneType == INTRO_SCENETYPE || m_sceneType == DEFAULT_SCENETYPE);
+		return (m_sceneType == DEFAULT_SCENETYPE);
 	}
 
 	void FileParser::handleSceneType()

@@ -158,7 +158,6 @@
     <ClInclude Include="DefaultScene.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FileParser.h" />
-    <ClInclude Include="IntroScene.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemImporter.h" />
     <ClInclude Include="Player.h" />
