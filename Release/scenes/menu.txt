@@ -1,0 +1,9 @@
+<>MENU</>
+
+<>Inventory</>
+<>Options</>
+<>Exit</>
+
+#3 goldurs_house/see_goldur | $AGE=18 $NAME=JAN #!
+
+~D

@@ -1,0 +1,13 @@
+<>"Who are you?", you hear someone whisper.
+"I said, who are you?", the voice now goes louder.
+The person does not seem happy with you..</>
+
+<>Wait whut?</>
+<>Where am I?</>
+<>What is going on?</>
+<>Open your eyes</>
+
+#1,2,3 goldurs_house/remember | $AGE=12 $HP=3 $MAXHP=10 $GETITEM=axe #!
+#4 goldurs_house/see_goldur | $HP=3 $MAXHP=10 #!
+
+~D
