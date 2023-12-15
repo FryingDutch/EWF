@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
-#include "Entity.h"
-#include "Player.h"
+#include "../Model/Entity/Entity.h"
+#include "../Model/Player/Player.h"
+#include "../Model/Item/Item.h"
 #include "json.hpp"
 #include <iostream>
 #include <fstream>
-#include "Item.h"
 
 namespace EWF
 {

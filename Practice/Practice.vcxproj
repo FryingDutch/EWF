@@ -147,23 +147,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fileParser.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="defaultScene.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="sceneManager.cpp" />
-    <ClCompile Include="system.cpp" />
+    <ClCompile Include="Manager\Scene\sceneManager.cpp" />
+    <ClCompile Include="Model\Player\player.cpp" />
+    <ClCompile Include="Model\Scene\Abstract\abstractScene.cpp" />
+    <ClCompile Include="Model\Scene\Default\defaultScene.cpp" />
+    <ClCompile Include="System\fileParser.cpp" />
+    <ClCompile Include="System\system.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DefaultScene.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="FileParser.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="ItemImporter.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="Manager\Scene\SceneManager.h" />
+    <ClInclude Include="Model\Entity\Entity.h" />
+    <ClInclude Include="Model\Item\Item.h" />
+    <ClInclude Include="Model\Player\Player.h" />
+    <ClInclude Include="Model\Scene\Abstract\AbstractScene.h" />
+    <ClInclude Include="Model\Scene\Default\DefaultScene.h" />
     <ClInclude Include="SceneInterface.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="System.h" />
+    <ClInclude Include="System\FileParser.h" />
+    <ClInclude Include="System\ItemImporter.h" />
+    <ClInclude Include="System\System.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

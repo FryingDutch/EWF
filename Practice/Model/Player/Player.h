@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Entity.h"
-#include "Item.h"
+#include "../Entity/Entity.h"
+#include "../Item/Item.h"
 #include <map>
 
 namespace EWF

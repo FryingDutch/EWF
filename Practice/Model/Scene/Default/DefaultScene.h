@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "SceneInterface.h"
-#include "AbstractScene.h"
+#include "../../SceneInterface.h"
+#include "../Abstract/AbstractScene.h"
 
 namespace EWF
 {

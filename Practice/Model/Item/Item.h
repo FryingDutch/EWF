@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "Entity.h"
-#include "Player.h"
+#include "../Entity/Entity.h"
+#include "../Player/Player.h"
 #include "json.hpp"
 
 

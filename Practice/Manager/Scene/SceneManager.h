@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-#include "System.h"
-#include "DefaultScene.h"
+#include "../../Model/Scene/Default/DefaultScene.h"
 
 namespace EWF
 {

@@ -25,9 +25,6 @@
     <Filter Include="Header Files\System">
       <UniqueIdentifier>{60cdede0-b017-4bec-859e-149749124e0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Interface">
-      <UniqueIdentifier>{da6c9558-1927-4a5b-9a67-2a88bf9c44a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Model">
       <UniqueIdentifier>{e720c54b-049a-426a-aa4f-04e017aacfcb}</UniqueIdentifier>
     </Filter>
@@ -37,24 +34,63 @@
     <Filter Include="Source Files\System">
       <UniqueIdentifier>{511fc2fe-6876-4fac-b69e-b372b49b2932}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Model\Scene">
+      <UniqueIdentifier>{c578239d-5bd7-4f44-a73e-096e7b939894}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model\Scene\Abstract">
+      <UniqueIdentifier>{672e95bc-729e-4dae-b1fe-23364d2fb0ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Scene">
+      <UniqueIdentifier>{d574f55a-ba2f-479d-81e9-a32b46408809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Scene\Abstract">
+      <UniqueIdentifier>{2457b28e-c186-47eb-91cc-a44db300abd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model\Scene\Default">
+      <UniqueIdentifier>{45035bf6-200a-483d-bfc9-d2510de074db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Scene\Default">
+      <UniqueIdentifier>{5072b2f9-8024-4da8-9b2a-a13021cf0da2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model\Player">
+      <UniqueIdentifier>{30e545c7-d79a-4565-b786-6aab9bf61695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Player">
+      <UniqueIdentifier>{7a4b54d4-e316-4180-b1f3-49d6835a0e06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Item">
+      <UniqueIdentifier>{182660bf-133c-49e6-bbab-8e49e1d941ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Entity">
+      <UniqueIdentifier>{e6260e8a-3811-43e9-800d-82bdd767be66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager\Scene">
+      <UniqueIdentifier>{22f5ab3e-a211-484b-a616-0b09cf999c86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager\Scene">
+      <UniqueIdentifier>{a0520f2a-8d74-4d1d-b905-1c646f913848}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="defaultScene.cpp">
-      <Filter>Source Files\Model</Filter>
+    <ClCompile Include="Model\Scene\Abstract\abstractScene.cpp">
+      <Filter>Source Files\Model\Scene\Abstract</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Source Files\Model</Filter>
+    <ClCompile Include="Model\Scene\Default\defaultScene.cpp">
+      <Filter>Source Files\Model\Scene\Default</Filter>
     </ClCompile>
-    <ClCompile Include="sceneManager.cpp">
-      <Filter>Source Files\Manager</Filter>
+    <ClCompile Include="Model\Player\player.cpp">
+      <Filter>Source Files\Model\Player</Filter>
     </ClCompile>
-    <ClCompile Include="system.cpp">
+    <ClCompile Include="Manager\Scene\sceneManager.cpp">
+      <Filter>Source Files\Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="System\fileParser.cpp">
       <Filter>Source Files\System</Filter>
     </ClCompile>
-    <ClCompile Include="fileParser.cpp">
+    <ClCompile Include="System\system.cpp">
       <Filter>Source Files\System</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,28 +98,31 @@
     <ClInclude Include="SceneInterface.h">
       <Filter>Header Files\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Header Files\Model</Filter>
+    <ClInclude Include="Model\Scene\Abstract\AbstractScene.h">
+      <Filter>Header Files\Model\Scene\Abstract</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files\Model</Filter>
+    <ClInclude Include="Model\Scene\Default\DefaultScene.h">
+      <Filter>Header Files\Model\Scene\Default</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files\Model</Filter>
+    <ClInclude Include="Model\Player\Player.h">
+      <Filter>Header Files\Model\Player</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultScene.h">
-      <Filter>Header Files\Model</Filter>
+    <ClInclude Include="Model\Item\Item.h">
+      <Filter>Header Files\Model\Item</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Header Files\Manager</Filter>
+    <ClInclude Include="Model\Entity\Entity.h">
+      <Filter>Header Files\Model\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="System.h">
+    <ClInclude Include="Manager\Scene\SceneManager.h">
+      <Filter>Header Files\Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="System\FileParser.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
-    <ClInclude Include="FileParser.h">
+    <ClInclude Include="System\ItemImporter.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
-    <ClInclude Include="ItemImporter.h">
+    <ClInclude Include="System\System.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
   </ItemGroup>

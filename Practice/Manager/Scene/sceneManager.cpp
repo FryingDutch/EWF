@@ -1,8 +1,9 @@
 #include <string>
-#include "DefaultScene.h"
+#include "../../../Model/Scene/Default/DefaultScene.h"
 #include "SceneManager.h"
-#include "FileParser.h"
-#include "ItemImporter.h"
+#include "../../System/FileParser.h"
+#include "../../System/ItemImporter.h"
+#include "../../System/System.h"
 
 namespace EWF
 {

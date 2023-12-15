@@ -3,7 +3,7 @@
 #include <functional>
 #include <algorithm>
 #include <map>
-#include "Player.h"
+#include "../Model/Player/Player.h"
 
 namespace EWF
 {
