@@ -11,11 +11,6 @@ namespace EWF
 	{
 	private:
 		std::string name{ "" };
-		uint32_t amount{ 0 };
-		uint32_t health{ 0 };
-		uint32_t maxHealth{ 0 };
-		uint32_t attack{ 0 };
-		uint32_t defense{ 0 };
 
 	private:
 		bool owned{ false };

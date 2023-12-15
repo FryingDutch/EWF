@@ -1,10 +1,11 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include "SceneInterface.h"
 
 namespace EWF
 {
-	class DefaultScene
+	class DefaultScene : public SceneInterface
 	{
 	protected:
 		std::string response{ "" };

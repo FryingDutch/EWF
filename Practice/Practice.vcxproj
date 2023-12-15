@@ -162,6 +162,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemImporter.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="SceneInterface.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="System.h" />
   </ItemGroup>
