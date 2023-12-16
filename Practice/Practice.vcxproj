@@ -160,6 +160,7 @@
     <ClInclude Include="Model\Entity\Entity.h" />
     <ClInclude Include="Model\Item\Item.h" />
     <ClInclude Include="Model\Player\Player.h" />
+    <ClInclude Include="Model\SceneInterface.h" />
     <ClInclude Include="Model\Scene\Abstract\AbstractScene.h" />
     <ClInclude Include="Model\Scene\Default\DefaultScene.h" />
     <ClInclude Include="SceneInterface.h" />

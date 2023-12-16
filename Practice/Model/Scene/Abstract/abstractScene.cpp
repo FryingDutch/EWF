@@ -39,8 +39,10 @@ namespace EWF {
 		thirdRowStats += (Player::getAge() == 1) ? "yr" : "yrs";
 
 		// Add a whitepsace of 1/3 of the total banner width
-		for (size_t i = 0; i < bannerWidth / 3; i++)
+		for (size_t i = 0; i < bannerWidth / 3; i++) 
+		{
 			thirdRowStats += " ";
+		}
 
 		// Add the player name
 		thirdRowStats += Player::getName();

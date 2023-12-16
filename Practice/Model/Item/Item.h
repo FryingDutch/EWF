@@ -21,9 +21,7 @@ namespace EWF
 
 		Item(int _ID, std::string _name, bool _oneUse) :
 			Entity(_ID), name(_name), oneUse(_oneUse)
-		{
-			
-		}
+		{}
 
 		std::string getName()
 		{

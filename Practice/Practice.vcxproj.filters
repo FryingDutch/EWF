@@ -125,5 +125,8 @@
     <ClInclude Include="System\System.h">
       <Filter>Header Files\System</Filter>
     </ClInclude>
+    <ClInclude Include="Model\SceneInterface.h">
+      <Filter>Header Files\Model\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

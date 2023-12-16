@@ -4,17 +4,15 @@
 #include "../../../System/System.h"
 #include "../../../Model/Player/Player.h"
 #include "../../../Manager/Scene/SceneManager.h"
+#include "../../SceneInterface.h"
 
 namespace EWF
 {
-
 	std::string DefaultScene::getResponse() { return response; }
 	std::string DefaultScene::getText(uint32_t _index) { return text[_index]; }
 
-	DefaultScene::DefaultScene(std::vector<std::string> _text)
-	{
-		text = _text;
-	}
+	DefaultScene::DefaultScene(std::vector<std::string> _text) :
+		text(_text) {}
 
 	void DefaultScene::setText(std::vector<std::string> _text)
 	{
@@ -26,7 +24,7 @@ namespace EWF
 	{
 		static std::string answer;
 		static int32_t argc;
-
+		
 		do
 		{
 			// Clear the screen at start, or after a bad input

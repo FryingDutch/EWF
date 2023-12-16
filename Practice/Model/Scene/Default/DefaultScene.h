@@ -2,11 +2,10 @@
 #include <iostream>
 #include <vector>
 #include "../../SceneInterface.h"
-#include "../Abstract/AbstractScene.h"
 
 namespace EWF
 {
-	class DefaultScene : public SceneInterface, AbstractScene
+	class DefaultScene : public SceneInterface
 	{
 	protected:
 		std::string response{ "" };

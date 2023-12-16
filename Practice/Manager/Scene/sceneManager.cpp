@@ -1,10 +1,11 @@
 #include <string>
 #include "../../../Model/Scene/Default/DefaultScene.h"
-#include "SceneManager.h"
 #include "../../System/FileParser.h"
 #include "../../System/ItemImporter.h"
 #include "../../System/System.h"
 
+
+/*implementation for >*/ #include "SceneManager.h"
 namespace EWF
 {
 	std::string SceneManager::response = "";
@@ -133,7 +134,11 @@ namespace EWF
 
 			else if (variableToChange == FileParser::m_variablesMap["get-item"])
 			{
-				Player::setItemActive(valueStr);
+				if(valueStr == "RESPONSE"){
+					Player::setItemActive(response);
+				} else {
+					Player::setItemActive(valueStr);
+				}
 			}
 
 			else if (variableToChange == FileParser::m_variablesMap["name"])
@@ -158,8 +163,8 @@ namespace EWF
 			}
 
 		}
-
 	}
+
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
