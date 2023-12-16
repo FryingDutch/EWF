@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <json.hpp>
+#include "../File.h"
 
 namespace EWF
 {
@@ -16,6 +18,9 @@ namespace EWF
 
 			FileLink() = default;
 		};
+
+		static File file;
+		static nlohmann::json m_files;
 
 		static char m_sceneType;
 		static std::string m_fileContent;

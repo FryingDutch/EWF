@@ -70,6 +70,9 @@
     <Filter Include="Header Files\Manager\Scene">
       <UniqueIdentifier>{a0520f2a-8d74-4d1d-b905-1c646f913848}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Model\File">
+      <UniqueIdentifier>{460d24b3-9ebc-49c9-9946-5bf67bdd8198}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -127,6 +130,15 @@
     </ClInclude>
     <ClInclude Include="Model\SceneInterface.h">
       <Filter>Header Files\Model\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>Header Files\Model\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Optionr.h">
+      <Filter>Header Files\Model\File</Filter>
+    </ClInclude>
+    <ClInclude Include="DataObject.h">
+      <Filter>Header Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

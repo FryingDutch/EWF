@@ -156,6 +156,8 @@
     <ClCompile Include="System\system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataObject.h" />
+    <ClInclude Include="File.h" />
     <ClInclude Include="Manager\Scene\SceneManager.h" />
     <ClInclude Include="Model\Entity\Entity.h" />
     <ClInclude Include="Model\Item\Item.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="Model\SceneInterface.h" />
     <ClInclude Include="Model\Scene\Abstract\AbstractScene.h" />
     <ClInclude Include="Model\Scene\Default\DefaultScene.h" />
+    <ClInclude Include="Optionr.h" />
     <ClInclude Include="SceneInterface.h" />
     <ClInclude Include="System\FileParser.h" />
     <ClInclude Include="System\ItemImporter.h" />

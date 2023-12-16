@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <map>
 #include "../Model/Player/Player.h"
+#include "../Optionr.h"
 
 namespace EWF
 {
@@ -12,6 +13,8 @@ namespace EWF
 	std::vector<std::string> FileParser::m_textBlocks;
 
 	std::vector<FileParser::FileLink> FileParser::m_fileLinks;
+
+	File FileParser::file;
 
 	std::map<std::string, bool> FileParser::m_readingFlagValueMap = {
 		{"block", false},
@@ -169,6 +172,8 @@ namespace EWF
 
 		// Create a fileLink to be filled with both the choices as well as the link and variable changes.
 		FileLink fileLink;
+		StoryOption option;
+
 		static const char MULTI_CHOICE_OPERATOR = ',';
 
 		// Until the maximum allowed of elements, keep looping, adding 2 to position to get the digit we need.
@@ -209,6 +214,7 @@ namespace EWF
 				std::vector<std::string> variableChange = handleVariableFlag();
 				if (!variableChange.empty()) {
 					fileLink.variableChanges.push_back(variableChange);
+					option.addVariableChange(variableChange);
 				}
 			}
 
@@ -228,6 +234,7 @@ namespace EWF
 				else
 				{
 					fileLink.link += m_fileContent[m_index];
+					option.setLink(option.getLink() + m_fileContent[m_index]);
 					m_index++;
 				}
 			}
@@ -240,6 +247,7 @@ namespace EWF
 		}
 
 		m_fileLinks.push_back(fileLink);
+		FileParser::file.addOption(option);
 	}
 
 	void FileParser::handleMessage()

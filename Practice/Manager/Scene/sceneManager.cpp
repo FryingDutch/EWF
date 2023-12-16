@@ -16,6 +16,7 @@ namespace EWF
 	{
 		for (size_t j = 0; j < FileParser::m_fileLinks[_i].variableChanges.size(); j++)
 		{
+			FileParser::file;
 			std::string variableToChange = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
 			char log_operator = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
 			uint32_t value{ 0 };
