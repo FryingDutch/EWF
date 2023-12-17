@@ -3,7 +3,8 @@
 #include "../../System/FileParser.h"
 #include "../../System/ItemImporter.h"
 #include "../../System/System.h"
-
+#include "../../Optionr.h"
+#include "json.hpp"
 
 /*implementation for >*/ #include "SceneManager.h"
 namespace EWF
@@ -14,22 +15,24 @@ namespace EWF
 
 	void SceneManager::applyStatsChanges(size_t _i)
 	{
-		for (size_t j = 0; j < FileParser::m_fileLinks[_i].variableChanges.size(); j++)
+		StoryOption option = FileParser::file.getOptionById(_i);
+		std::vector<std::vector<std::string>> varChanges = option.getVariableChanges();
+
+		for (size_t j = 0; j < varChanges.size(); j++)
 		{
-			FileParser::file;
-			std::string variableToChange = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::NEW_VARIABLE];
-			char log_operator = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::LOGICAL_OPERATOR][0];
+			std::string variableToChange = varChanges[j][FileParser::NEW_VARIABLE];
+			char log_operator = varChanges[j][FileParser::LOGICAL_OPERATOR][0];
 			uint32_t value{ 0 };
 			std::string valueStr{ "" };
 
-			if (System::isDigit(FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE]))
+			if (System::isDigit(varChanges[j][FileParser::VALUE]))
 			{
-				value = std::stoi(FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE]);
+				value = std::stoi(varChanges[j][FileParser::VALUE]);
 			}
 
 			else 
 			{
-				valueStr = FileParser::m_fileLinks[_i].variableChanges[j][FileParser::VALUE];
+				valueStr = varChanges[j][FileParser::VALUE];
 			}
 
 			if (variableToChange == FileParser::m_variablesMap["health"])
@@ -169,19 +172,11 @@ namespace EWF
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
-		std::vector<std::string> textBlocks = { FileParser::file.getStory() };
-		for (size_t i = 0; i < FileParser::file.getOptions().size(); i++)
-		{
-			textBlocks.push_back(FileParser::file.getOptionById(i).getText());
-		}
-
 		switch (FileParser::m_sceneType)
 		{
 		case DEFAULT:
-			defaultScene.setText(textBlocks);
-			(FileParser::m_customMessage.size() > 0) 
-				? defaultScene.render(FileParser::m_responseIsString, FileParser::m_customMessage) 
-				: defaultScene.render(FileParser::m_responseIsString, FileParser::m_message);
+			defaultScene.render(FileParser::m_responseIsString, 
+				(FileParser::m_customMessage.size() > 0) ? FileParser::m_customMessage : FileParser::m_message);
 
 			response = defaultScene.getResponse();
 			break;
@@ -206,17 +201,8 @@ namespace EWF
 
 		else
 		{
-			for (size_t i = 0; i < FileParser::m_fileLinks.size(); i++)
-			{
-				for (size_t j = 0; j < FileParser::m_fileLinks[i].boundChoices.size(); j++)
-				{
-					if (response == FileParser::m_fileLinks[i].boundChoices[j])
-					{
-						FileParser::m_filePath = FileParser::m_fileLinks[i].link; // if its a match, set the current link
-						applyStatsChanges(i);
-					}
-				}
-			}
+			FileParser::m_filePath = FileParser::file.getOptionById(stoi(response)).getLink();
+			applyStatsChanges(stoi(response));
 		}
 
 		if(FileParser::m_fileLinks.size() <= 0)

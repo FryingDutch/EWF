@@ -10,11 +10,8 @@
 namespace EWF
 {
 	std::string FileParser::m_goToFile = "";
-
 	std::vector<std::string> FileParser::m_textBlocks;
-
 	std::vector<FileParser::FileLink> FileParser::m_fileLinks;
-
 	File FileParser::file;
 
 	std::map<std::string, bool> FileParser::m_readingFlagValueMap = {

@@ -48,7 +48,7 @@ namespace EWF
 			}
 				
 
-		} while (!System::isDigit(answer) || std::stoul(answer) >= text.size() || std::stoi(answer) < 0);
+		} while (!System::isDigit(answer) || std::stoul(answer) > FileParser::file.getOptions().size() || std::stoi(answer) < 0);
 
 		response = answer;
 	}
