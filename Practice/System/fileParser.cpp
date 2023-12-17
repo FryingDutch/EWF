@@ -10,8 +10,6 @@
 namespace EWF
 {
 	std::string FileParser::m_goToFile = "";
-	std::vector<std::string> FileParser::m_textBlocks;
-	std::vector<FileParser::FileLink> FileParser::m_fileLinks;
 	File FileParser::file;
 
 	std::map<std::string, bool> FileParser::m_readingFlagValueMap = {
@@ -172,7 +170,6 @@ namespace EWF
 		}
 
 		m_readingFlagValueMap["block"] = false;
-		m_textBlocks.push_back(m_block);
 		m_block = "";
 	}
 
@@ -212,7 +209,6 @@ namespace EWF
 			}
 
 			storyOption.setText(storyOption.getText() + m_fileContent[m_index]);
-			
 			m_index++;
 		}
 
@@ -225,8 +221,6 @@ namespace EWF
 		m_readingFlagValueMap["filelink"] = true;
 
 		// Create a fileLink to be filled with both the choices as well as the link and variable changes.
-		FileLink fileLink;
-
 		static const char MULTI_CHOICE_OPERATOR = ',';
 
 		std::vector<uint32_t> optionIds;
@@ -238,7 +232,6 @@ namespace EWF
 			if ((m_index + 2) < m_fileContent.size() && std::isdigit(m_fileContent[m_index]))
 			{
 				std::string choice{ m_fileContent[m_index] };
-				fileLink.boundChoices.push_back(choice);
 
 				uint32_t optionId = stoi(choice);
 				optionIds.push_back(optionId);
@@ -282,7 +275,6 @@ namespace EWF
 			{
 				std::vector<std::string> variableChange = handleVariableFlag();
 				if (!variableChange.empty()) {
-					fileLink.variableChanges.push_back(variableChange);
 					for (size_t i = 0; i < optionsToApplyOn.size(); i++)
 					{
 						optionsToApplyOn[i].addVariableChange(variableChange);
@@ -305,7 +297,6 @@ namespace EWF
 
 				else
 				{
-					fileLink.link += m_fileContent[m_index];
 					for (size_t i = 0; i < optionsToApplyOn.size(); i++)
 					{
 						optionsToApplyOn[i].setLink(optionsToApplyOn[i].getLink() + m_fileContent[m_index]);
@@ -320,8 +311,6 @@ namespace EWF
 				break;
 			}
 		}
-
-		m_fileLinks.push_back(fileLink);
 
 		for (size_t i = 0; i < optionsToApplyOn.size(); i++)
 		{
@@ -342,7 +331,6 @@ namespace EWF
 			else if (!isEndMessageFlag())
 			{
 				FileParser::file.setMessage(FileParser::file.getMessage() + m_fileContent[m_index]);
-				m_customMessage += m_fileContent[m_index];
 				m_index++;
 			}
 
@@ -392,7 +380,6 @@ namespace EWF
 						isOperator = true;
 					}
 				}
-
 
 				if (m_fileContent[m_index + 1] == ' ' || m_fileContent[m_index + 1] == '\n')
 				{
@@ -446,13 +433,6 @@ namespace EWF
 		}
 
 		m_customMessage = "";
-
-		m_textBlocks.clear();
-		m_textBlocks.shrink_to_fit();
-
-		m_fileLinks.clear();
-		m_fileLinks.shrink_to_fit();
-
 		m_index = 0;
 		m_responseIsString = false;
 	}

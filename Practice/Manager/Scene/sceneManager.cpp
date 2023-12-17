@@ -5,6 +5,7 @@
 #include "../../System/System.h"
 #include "../../Optionr.h"
 #include "json.hpp"
+#include "../../Model/Player/Player.h"
 
 /*implementation for >*/ #include "SceneManager.h"
 namespace EWF
@@ -12,6 +13,9 @@ namespace EWF
 	std::string SceneManager::response = "";
 
 	DefaultScene SceneManager::defaultScene;
+
+	Player SceneManager::m_player;
+	
 
 	void SceneManager::applyStatsChanges(size_t _i)
 	{
@@ -35,105 +39,42 @@ namespace EWF
 				valueStr = varChanges[j][FileParser::VALUE];
 			}
 
-			if (variableToChange == FileParser::m_variablesMap["health"])
-			{
+			if (valueStr.size() > 0) {
 				switch (log_operator)
 				{
 				case '=':
-					(value > Player::getMaxHealth()) ? Player::setHealth(Player::getMaxHealth()) : Player::setHealth(value);
+					SceneManager::m_player.setData(variableToChange, valueStr);
 					break;
 
-				case '+':
-					((Player::getHealth() + value) > Player::getMaxHealth()) ? Player::setHealth(Player::getMaxHealth()) : Player::setHealth(Player::getHealth() + value);
-					break;
-
-				case '-':
-					((Player::getHealth() - value) <= 0) ? Player::setHealth(0) : Player::setHealth(Player::getHealth() - value);
-					break;
-
-				}
-
-				if (Player::getHealth() <= 0)
-				{
-					std::cout << "You took " << value << " DMG. \n";
-					System::errorMessage("You have died...", true);
-				}
-			}
-
-			else if (variableToChange == FileParser::m_variablesMap["age"])
-			{
-				switch (log_operator)
-				{
-				case '=':
-					Player::setAge(value);
-					break;
-
-				case '+':
-					Player::setAge(Player::getAge() + value);
-					break;
-
-				case '-':
-					((Player::getAge() - value) < 0) ? Player::setAge(0) : Player::setAge(Player::getAge() - value);
+				default:
 					break;
 
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variablesMap["attack"])
+			else 
 			{
 				switch (log_operator)
 				{
 				case '=':
-					Player::setAttack(value);
+					SceneManager::m_player.setData(variableToChange, value);
 					break;
 
 				case '+':
-					Player::setAttack(Player::getAttack() + value);
+					SceneManager::m_player.setData(variableToChange, SceneManager::m_player.getData(variableToChange) + value);
 					break;
 
 				case '-':
-					((Player::getAttack() - value) < 0) ? Player::setAttack(0) : Player::setAttack(Player::getAttack() - value);
+					SceneManager::m_player.setData(variableToChange, SceneManager::m_player.getData(variableToChange) + value);
 					break;
 
 				}
 			}
 
-			else if (variableToChange == FileParser::m_variablesMap["defense"])
+			if (SceneManager::m_player.getHealth() <= 0)
 			{
-				switch (log_operator)
-				{
-				case '=':
-					Player::setDefense(value);
-					break;
-
-				case '+':
-					Player::setDefense(Player::getDefense() + value);
-					break;
-
-				case '-':
-					((Player::getDefense() - value) < 0) ? Player::setDefense(0) : Player::setDefense(Player::getDefense() - value);
-					break;
-
-				}
-			}
-
-			else if (variableToChange == FileParser::m_variablesMap["maximum-health"])
-			{
-				switch (log_operator)
-				{
-				case '=':
-					Player::setMaxHealth(value);
-					break;
-
-				case '+':
-					Player::setMaxHealth(Player::getMaxHealth() + value);
-					break;
-
-				case '-':
-					((Player::getMaxHealth() - value) < 1) ? Player::setMaxHealth(1) : Player::setMaxHealth(Player::getMaxHealth() - value);
-					break;
-
-				}
+				std::cout << "You took " << value << " DMG. \n";
+				System::errorMessage("You have died...", true);
 			}
 
 			else if (variableToChange == FileParser::m_variablesMap["get-item"])
@@ -144,28 +85,6 @@ namespace EWF
 					Player::setItemActive(valueStr);
 				}
 			}
-
-			else if (variableToChange == FileParser::m_variablesMap["name"])
-			{
-				if (!valueStr.empty() && valueStr != "RESPONSE")
-				{
-					switch (log_operator)
-					{
-					case '=':
-						Player::setName(valueStr);
-						break;
-
-					default:
-						System::errorMessage("Not a valid operator for NAME");
-						break;
-					}
-				}
-
-				else if(valueStr == "RESPONSE"){
-					Player::setName(response);
-				}
-			}
-
 		}
 	}
 
@@ -190,8 +109,8 @@ namespace EWF
 		// Set the next file to read.
 		if (FileParser::m_responseIsString)
 		{
-			FileParser::m_filePath = FileParser::m_fileLinks[0].link;
-			applyStatsChanges(0);
+			FileParser::m_filePath = FileParser::file.getOptionById(1).getLink();
+			applyStatsChanges(1);
 		}
 
 		else if (response == "0")
@@ -205,7 +124,7 @@ namespace EWF
 			applyStatsChanges(stoi(response));
 		}
 
-		if(FileParser::m_fileLinks.size() <= 0)
+		if(FileParser::file.getOptions().size() <= 0)
 			System::errorMessage("No file link bound to this choice", true);
 	}
 

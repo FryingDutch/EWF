@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../../Model/Scene/Default/DefaultScene.h"
+#include "../../Model/Player/Player.h"
 
 namespace EWF
 {
@@ -10,6 +11,9 @@ namespace EWF
 		static std::string response;
 
 		static DefaultScene defaultScene;
+
+	public:
+		static Player m_player;
 
 	public:
 		enum : char

@@ -11,6 +11,7 @@ namespace EWF
 		const std::string STORY = "story";
 		const std::string STORY_OPTIONS = "story-options";
 		const std::string MESSAGE = "message";
+		const std::string RESPONSE = "response";
 
 	public:
 		File()
@@ -18,6 +19,7 @@ namespace EWF
 			this->setData(File::STORY, "");
 			this->setData(File::STORY_OPTIONS, nlohmann::json::array());
 			this->setData(File::MESSAGE, nlohmann::json::array());
+			this->setData(File::RESPONSE, "");
 		}
 
 		void resetData()
@@ -25,6 +27,7 @@ namespace EWF
 			this->setData(File::STORY, "");
 			this->setData(File::STORY_OPTIONS, nlohmann::json::array());
 			this->setData(File::MESSAGE, nlohmann::json::array());
+			this->setData(File::RESPONSE, "");
 		}
 
 		void setStory(std::string _story)
@@ -83,6 +86,11 @@ namespace EWF
 		void setMessage(std::string _message)
 		{
 			this->setData(File::MESSAGE, _message);
+		}
+
+		void setResponse(std::string _response)
+		{
+			this->setData(File::RESPONSE, _response);
 		}
 
 		std::string getMessage()

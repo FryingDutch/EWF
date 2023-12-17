@@ -10,27 +10,15 @@ namespace EWF
 	struct FileParser
 	{
 	private:
-		struct FileLink
-		{
-			std::string link;
-			std::vector<std::string> boundChoices;
-			std::vector<std::vector<std::string>> variableChanges;
-
-			FileLink() = default;
-		};
-
 		static nlohmann::json m_files;
 
 		static char m_sceneType;
 		static std::string m_fileContent;
 		static size_t m_index;
 		static bool m_responseIsString;
-		static std::vector<std::string> m_textBlocks;
 		static std::map<std::string, char> operatorsMap;
 		static std::map<std::string, std::string> m_variablesMap;
 		static std::map<std::string, bool> m_readingFlagValueMap;
-
-		static std::vector<FileLink> m_fileLinks;
 
 		static std::string m_block;
 		static std::string m_message;

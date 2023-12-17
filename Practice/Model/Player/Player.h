@@ -4,40 +4,104 @@
 #include "../Entity/Entity.h"
 #include "../Item/Item.h"
 #include <map>
+#include "../../DataObject.h"
+#include "json.hpp"
 
 namespace EWF
 {
-	class Player : public Entity
+	class Player : public DataObject
 	{
+	public:
+		const std::string NAME = "NAME";
+		const std::string AGE = "AGE";
+
+		const std::string HEALTH = "HP";
+		const std::string MAX_HEALTH = "MAXHP";
+		const std::string MIN_HEALTH = "MINHP";
+		const std::string ATTACK = "ATK";
+		const std::string DEFENSE = "DEF";
+
+		const std::string ITEMS = "items";
+
+	public:
+		Player()
+		{
+			this->setData(Player::NAME, "");
+			this->setData(Player::AGE, 0);
+			this->setData(Player::MAX_HEALTH, 10);
+			this->setData(Player::MIN_HEALTH, 1);
+			this->setData(Player::HEALTH, 3);
+			this->setData(Player::ATTACK, 10);
+			this->setData(Player::DEFENSE, 5);
+			this->setData(Player::ITEMS, nlohmann::json());
+		}
+
 	private:
-		static uint32_t maxHealth;
-		static int32_t health;
-		static int32_t minHealth;
-
-		static uint32_t attack;
-		static uint32_t defense;
-
-		static std::string name;
-		static uint32_t age;
-
 		static std::map<std::string, Item> items;
-		static std::vector<std::string> items2;
 
 	public:
 		static bool isMale;
 
 	public:
-		static void setName(std::string _name) { name = _name; }
-		static void setAge(uint32_t _age) { age = _age; }
+		void setName(std::string _name) 
+		{
+			this->setData(Player::NAME, _name);
+		}
 
-		static std::string getName() { return name; }
-		static uint32_t getAge() { return age; }
+		std::string getName()
+		{
+			return this->getData(Player::NAME);
+		}
 
-		static int32_t getHealth() { return health; }
-		static void setHealth(int32_t _health) { health = _health; }
+		void setAge(uint32_t _age) 
+		{ 
+			this->setData(Player::AGE, _age);
+		}
 
-		static uint32_t getMaxHealth() { return maxHealth; }
-		static void setMaxHealth(uint32_t _maxHealth) { maxHealth = _maxHealth; }
+		uint32_t getAge()
+		{
+			return this->getData(Player::AGE);
+		}
+
+		void setHealth(int32_t _health)
+		{
+			this->setData(Player::HEALTH, _health);
+		}
+
+		int32_t getHealth() 
+		{
+			return this->getData(Player::HEALTH);
+		}
+
+		void setMaxHealth(uint32_t _maxHealth)
+		{ 
+			this->setData(Player::MAX_HEALTH, _maxHealth);
+		}
+
+		uint32_t getMaxHealth() 
+		{ 
+			return this->getData(Player::MAX_HEALTH);
+		}
+
+		void setAttack(uint32_t _attack)
+		{
+			this->setData(Player::ATTACK, _attack);
+		}
+
+		uint32_t getAttack() 
+		{ 
+			return this->getData(Player::ATTACK);
+		}
+
+		void setDefense(uint32_t _defense)
+		{
+			this->setData(Player::DEFENSE, _defense);
+		}
+
+		uint32_t getDefense() 
+		{ 
+			return this->getData(Player::DEFENSE);
+		}
 
 		static void addItem(Item _item) { items[_item.getName()] = _item; }
 		static void setItemActive(std::string itemName) { items[itemName].setOwned(true); }
@@ -55,11 +119,5 @@ namespace EWF
 		}
 
 		static std::map<std::string, Item> getItems() { return items; }
-
-		static uint32_t getAttack() { return health; }
-		static void setAttack(uint32_t _attack) { attack = _attack; }
-
-		static uint32_t getDefense() { return defense; }
-		static void setDefense(uint32_t _defense) { defense = _defense; }
 	};
 }
