@@ -13,6 +13,7 @@ namespace EWF
 			m_data(_data) {}
 
 		nlohmann::json getData() { return this->m_data; };
+
 		auto getData(std::string _key)
 		{
 			for (auto& keyValue : this->m_data.items())

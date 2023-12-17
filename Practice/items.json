@@ -2,31 +2,37 @@
     {
         "id":1,
         "name":"axe",
-        "owned": false
+        "qty": 0,
+        "owned": true
     },
     {
         "id":2,
         "name":"knife",
-        "owned": false
+        "qty": 0,
+        "owned": true
     },
     {
         "id":3,
         "name":"spoon",
-        "owned": false
+        "qty": 8,
+        "owned": true
     },
     {
         "id":4,
         "name":"bread",
-        "owned": false
+        "qty": 0,
+        "owned": true
     },
     {
         "id":5,
         "name":"water",
-        "owned": false
+        "qty": 3,
+        "owned": true
     },
     {
         "id":6,
         "name":"key",
-        "owned": false
+        "qty": 0,
+        "owned": true
     }
 ]

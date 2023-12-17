@@ -2,6 +2,7 @@
 #include <string>
 #include "../../Model/Scene/Default/DefaultScene.h"
 #include "../../Model/Player/Player.h"
+#include "../../../InventoryScene.h"
 
 namespace EWF
 {
@@ -9,6 +10,7 @@ namespace EWF
 	{
 	private:
 		static DefaultScene defaultScene;
+		static InventoryScene inventoryScene;
 
 	public:
 		static Player m_player;

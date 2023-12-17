@@ -105,6 +105,18 @@ namespace EWF
 			return this->getData(Player::ITEMS);
 		}
 
+		std::vector<Item> getItemsAsObjects()
+		{
+			nlohmann::json items = this->getItems();
+			std::vector<Item> itemObjects;
+
+			for (const auto& item : items) {
+				itemObjects.push_back(Item{ item });
+			}
+
+			return itemObjects;
+		}
+
 		void addItem(Item _item) 
 		{ 
 			nlohmann::json items = this->getItems();

@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="inventoryScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Manager\Scene\sceneManager.cpp" />
     <ClCompile Include="Model\Player\player.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="DataObject.h" />
     <ClInclude Include="File.h" />
+    <ClInclude Include="InventoryScene.h" />
     <ClInclude Include="Manager\Scene\SceneManager.h" />
     <ClInclude Include="Model\Entity\Entity.h" />
     <ClInclude Include="Model\Item\Item.h" />

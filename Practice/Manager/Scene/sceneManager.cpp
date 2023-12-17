@@ -6,11 +6,14 @@
 #include "../../Optionr.h"
 #include "json.hpp"
 #include "../../Model/Player/Player.h"
+#include "../../../InventoryScene.h"
 
 /*implementation for >*/ #include "SceneManager.h"
 namespace EWF
 {
 	DefaultScene SceneManager::defaultScene;
+	InventoryScene SceneManager::inventoryScene;
+
 	Player SceneManager::m_player;
 
 	void SceneManager::applyStatsChanges(size_t _i)
@@ -37,7 +40,10 @@ namespace EWF
 
 			if (variableToChange == FileParser::m_variablesMap["get-item"])
 			{
-				Item newItem = SceneManager::m_player.getItemByName((valueStr == "RESPONSE") ? FileParser::file.getResponse() : valueStr);
+				Item newItem = SceneManager::m_player.getItemByName((valueStr == "RESPONSE") 
+					? FileParser::file.getResponse() 
+					: valueStr);
+
 				newItem.setOwned(true);
 				SceneManager::m_player.updateItem(newItem);
 			}
@@ -47,7 +53,9 @@ namespace EWF
 				switch (log_operator)
 				{
 				case '=':
-					SceneManager::m_player.setData(variableToChange, (valueStr == "RESPONSE") ? FileParser::file.getResponse() : valueStr);
+					SceneManager::m_player.setData(variableToChange, (valueStr == "RESPONSE") 
+						? FileParser::file.getResponse() 
+						: valueStr);
 					break;
 
 				default:
@@ -98,6 +106,13 @@ namespace EWF
 				(FileParser::file.getMessage().size() > 0) 
 					? FileParser::file.getMessage()
 					: FileParser::m_message);
+			break;
+
+		case INTRO:
+			inventoryScene.render(FileParser::m_responseIsString,
+				(FileParser::file.getMessage().size() > 0)
+				? FileParser::file.getMessage()
+				: FileParser::m_message);
 			break;
 
 		// TO-DO add more sceneTemplates to use.

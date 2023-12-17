@@ -73,6 +73,12 @@
     <Filter Include="Header Files\Model\File">
       <UniqueIdentifier>{460d24b3-9ebc-49c9-9946-5bf67bdd8198}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Model\Scene\Inventory">
+      <UniqueIdentifier>{7956e0da-3da8-4784-baed-71d1da9b5465}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model\Scene\Inventory">
+      <UniqueIdentifier>{4462656c-1068-4063-bead-7ca0ade2b4c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -95,6 +101,9 @@
     </ClCompile>
     <ClCompile Include="System\system.cpp">
       <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="inventoryScene.cpp">
+      <Filter>Source Files\Model\Scene\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="DataObject.h">
       <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryScene.h">
+      <Filter>Header Files\Model\Scene\Inventory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

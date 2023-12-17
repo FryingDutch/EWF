@@ -12,6 +12,7 @@ namespace EWF
 	public:
 		const std::string ID = "id";
 		const std::string NAME = "name";
+		const std::string QTY = "qty";
 		const std::string OWNED = "owned";
 
 	public:
@@ -23,6 +24,7 @@ namespace EWF
 			this->setData(Item::ID, NULL);
 			this->setData(Item::NAME, std::string{});
 			this->setData(Item::OWNED, false);
+			this->setData(Item::QTY, 0);
 		};
 
 		uint32_t getId()
@@ -38,6 +40,16 @@ namespace EWF
 		std::string getName()
 		{
 			return this->getData(Item::NAME);
+		}
+
+		void setQuantity(uint32_t _qty)
+		{
+			this->setData(Item::QTY, _qty);
+		}
+
+		uint32_t getQuantity()
+		{
+			return this->getData(Item::QTY);
 		}
 
 		void setOwned(bool _owned)
