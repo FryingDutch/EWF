@@ -5,6 +5,7 @@
 #include <map>
 #include "../Model/Player/Player.h"
 #include "../Optionr.h"
+#include "json.hpp"
 
 namespace EWF
 {
@@ -125,6 +126,16 @@ namespace EWF
 		return FileParser::isFlag("<>");
 	}
 
+	bool FileParser::isStartStoryBlockFlag()
+	{
+		return FileParser::isFlag("<story>");
+	}
+
+	bool FileParser::isStartOptionBlockFlag()
+	{
+		return FileParser::isFlag("<option>");
+	}
+
 	bool FileParser::isEndBlockFlag()
 	{
 		return FileParser::isFlag("</>", { "block" });
@@ -148,6 +159,8 @@ namespace EWF
 	void FileParser::handleBlock()
 	{
 		m_readingFlagValueMap["block"] = true;
+		StoryOption storyOption;
+
 		while (!isEndBlockFlag())
 		{
 			// if at end of file and block is still being read
@@ -166,15 +179,60 @@ namespace EWF
 		m_block = "";
 	}
 
+	void FileParser::handleStoryBlock()
+	{
+		m_readingFlagValueMap["block"] = true;
+		while (!isEndBlockFlag())
+		{
+			// if at end of file and block is still being read
+			if ((m_index + 1) == m_fileContent.size())
+			{
+				System::errorMessage("Block not closed </>", true);
+				return;
+			}
+
+			FileParser::file.setStory(FileParser::file.getStory() + m_fileContent[m_index]);
+			m_index++;
+		}
+		m_readingFlagValueMap["block"] = false;
+	}
+
+	void FileParser::handleOptionBlock()
+	{
+		m_readingFlagValueMap["block"] = true;
+		StoryOption storyOption;
+
+		uint32_t currentOptionCount = FileParser::file.getOptions().size();
+		storyOption.setId(++currentOptionCount);
+
+		while (!isEndBlockFlag())
+		{
+			// if at end of file and block is still being read
+			if ((m_index + 1) == m_fileContent.size())
+			{
+				System::errorMessage("Block not closed </>", true);
+				return;
+			}
+
+			storyOption.setText(storyOption.getText() + m_fileContent[m_index]);
+			
+			m_index++;
+		}
+
+		FileParser::file.addOption(storyOption);
+		m_readingFlagValueMap["block"] = false;
+	}
+
 	void FileParser::handleFileLink()
 	{
 		m_readingFlagValueMap["filelink"] = true;
 
 		// Create a fileLink to be filled with both the choices as well as the link and variable changes.
 		FileLink fileLink;
-		StoryOption option;
 
 		static const char MULTI_CHOICE_OPERATOR = ',';
+
+		std::vector<uint32_t> optionIds;
 
 		// Until the maximum allowed of elements, keep looping, adding 2 to position to get the digit we need.
 		for (; m_index <= m_fileContent.size(); m_index += 2)
@@ -185,9 +243,14 @@ namespace EWF
 				std::string choice{ m_fileContent[m_index] };
 				fileLink.boundChoices.push_back(choice);
 
+				uint32_t optionId = stoi(choice);
+				optionIds.push_back(optionId);
+
 				// If the next element fits the standard, do another cycle
 				if (std::isdigit(m_fileContent[m_index + 2]) && m_fileContent[m_index + 1] == MULTI_CHOICE_OPERATOR)
+				{
 					continue;
+				}
 
 				// Else if there is a [,non_digit], end program. 
 				else if (m_fileContent[m_index + 1] == MULTI_CHOICE_OPERATOR && !std::isdigit(m_fileContent[m_index + 2]))
@@ -202,6 +265,15 @@ namespace EWF
 			}
 		}
 
+		nlohmann::json optionsAsJson = FileParser::file.getOptions();
+		std::vector<StoryOption> optionsToApplyOn;
+
+		for (size_t i = 0; i < optionIds.size(); i++)
+		{
+			StoryOption option = FileParser::file.getOptionById(optionIds[i]);
+			optionsToApplyOn.push_back(option);
+		}
+
 		m_index += 2; // Set the index to pass everything we read in, add two for empty space ' ' and the first char to be read next
 		bool readingVariables = false;
 		while (m_index < m_fileContent.size())
@@ -214,7 +286,10 @@ namespace EWF
 				std::vector<std::string> variableChange = handleVariableFlag();
 				if (!variableChange.empty()) {
 					fileLink.variableChanges.push_back(variableChange);
-					option.addVariableChange(variableChange);
+					for (size_t i = 0; i < optionsToApplyOn.size(); i++)
+					{
+						optionsToApplyOn[i].addVariableChange(variableChange);
+					}
 				}
 			}
 
@@ -234,7 +309,10 @@ namespace EWF
 				else
 				{
 					fileLink.link += m_fileContent[m_index];
-					option.setLink(option.getLink() + m_fileContent[m_index]);
+					for (size_t i = 0; i < optionsToApplyOn.size(); i++)
+					{
+						optionsToApplyOn[i].setLink(optionsToApplyOn[i].getLink() + m_fileContent[m_index]);
+					}
 					m_index++;
 				}
 			}
@@ -247,7 +325,11 @@ namespace EWF
 		}
 
 		m_fileLinks.push_back(fileLink);
-		FileParser::file.addOption(option);
+
+		for (size_t i = 0; i < optionsToApplyOn.size(); i++)
+		{
+			FileParser::file.updateOption(optionsToApplyOn[i]);
+		}
 	}
 
 	void FileParser::handleMessage()
@@ -262,6 +344,7 @@ namespace EWF
 
 			else if (!isEndMessageFlag())
 			{
+				FileParser::file.setMessage(FileParser::file.getMessage() + m_fileContent[m_index]);
 				m_customMessage += m_fileContent[m_index];
 				m_index++;
 			}
@@ -358,6 +441,9 @@ namespace EWF
 
 	void FileParser::defaultAllData()
 	{
+
+		FileParser::file.resetData();
+
 		for (auto& keyValue : FileParser::m_readingFlagValueMap) {
 			keyValue.second = false;
 		}
@@ -388,17 +474,20 @@ namespace EWF
 		// Start reading the content of the file per char
 		for (; m_index < m_fileContent.size(); m_index++)
 		{
-			if (isStartBlockFlag())
-				handleBlock();
+			if (FileParser::isStartStoryBlockFlag())
+				FileParser::handleStoryBlock();
 
-			else if (isStartFileLinkFlag())
-				handleFileLink();
+			else if (FileParser::isStartOptionBlockFlag())
+				FileParser::handleOptionBlock();
 
-			else if (isStartMessageFlag())
-				handleMessage();
+			else if (FileParser::isStartFileLinkFlag())
+				FileParser::handleFileLink();
 
-			else if (isSceneTypeFlag())
-				handleSceneType();
+			else if (FileParser::isStartMessageFlag())
+				FileParser::handleMessage();
+
+			else if (FileParser::isSceneTypeFlag())
+				FileParser::handleSceneType();
 		}
 	}
 }

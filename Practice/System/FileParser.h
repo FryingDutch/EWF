@@ -69,6 +69,12 @@ namespace EWF
 
 		static bool isStartBlockFlag();
 		static bool isEndBlockFlag();
+
+		static bool isStartStoryBlockFlag();
+		static bool isStartOptionBlockFlag();
+
+		static void handleStoryBlock();
+		static void handleOptionBlock();
 		
 		static bool isStartFileLinkFlag();
 		static bool isEndFileLinkFlag();

@@ -169,10 +169,19 @@ namespace EWF
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
+		std::vector<std::string> textBlocks = { FileParser::file.getStory() };
+		for (size_t i = 0; i < FileParser::file.getOptions().size(); i++)
+		{
+			if (FileParser::file.getOptionById(i).getText() != "") {
+				textBlocks.push_back(FileParser::file.getOptionById(i).getText());
+			}
+			
+		}
+
 		switch (FileParser::m_sceneType)
 		{
 		case DEFAULT:
-			defaultScene.setText(FileParser::m_textBlocks);
+			defaultScene.setText(textBlocks);
 			(FileParser::m_customMessage.size() > 0) 
 				? defaultScene.render(FileParser::m_responseIsString, FileParser::m_customMessage) 
 				: defaultScene.render(FileParser::m_responseIsString, FileParser::m_message);

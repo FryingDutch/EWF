@@ -10,14 +10,21 @@ namespace EWF
 	public:
 		const std::string STORY = "story";
 		const std::string STORY_OPTIONS = "story-options";
-		const std::string OUTCOMES = "outcomes";
+		const std::string MESSAGE = "message";
 
 	public:
 		File()
 		{
 			this->setData(File::STORY, "");
 			this->setData(File::STORY_OPTIONS, nlohmann::json::array());
-			this->setData(File::OUTCOMES, nlohmann::json::array());
+			this->setData(File::MESSAGE, nlohmann::json::array());
+		}
+
+		void resetData()
+		{
+			this->setData(File::STORY, "");
+			this->setData(File::STORY_OPTIONS, nlohmann::json::array());
+			this->setData(File::MESSAGE, nlohmann::json::array());
 		}
 
 		void setStory(std::string _story)
@@ -40,6 +47,32 @@ namespace EWF
 			return this->getData(File::STORY_OPTIONS);
 		}
 
+		StoryOption getOptionById(uint32_t _id)
+		{
+			nlohmann::json options = this->getData(File::STORY_OPTIONS);
+
+			for (const auto& option : options) {
+				if (option["id"] == _id) {
+					return StoryOption{ option };
+				}
+			}
+
+			return StoryOption{};
+		}
+
+		void updateOption(StoryOption _option)
+		{
+			nlohmann::json options = this->getData(File::STORY_OPTIONS);
+
+			for (auto& option : options) {
+				if (option["id"] == _option.getId()) {
+					option = _option.getData();
+				}
+			}
+
+			this->setData(File::STORY_OPTIONS, options);
+		}
+
 		void addOption(StoryOption _option)
 		{
 			nlohmann::json data = this->getOptions();
@@ -47,21 +80,14 @@ namespace EWF
 			this->setData(File::STORY_OPTIONS, data);
 		}
 
-		void setOutcomes(nlohmann::json _options)
+		void setMessage(std::string _message)
 		{
-			this->setData(File::OUTCOMES, _options);
+			this->setData(File::MESSAGE, _message);
 		}
 
-		nlohmann::json getOutcomes()
+		std::string getMessage()
 		{
-			return this->getData(File::OUTCOMES);
-		}
-
-		void addOutcome(StoryOption _option)
-		{
-			nlohmann::json data = this->getOutcomes();
-			data.push_back(_option.getData());
-			this->setData(File::OUTCOMES, data);
+			return this->getData(File::MESSAGE);
 		}
 	};
 }
