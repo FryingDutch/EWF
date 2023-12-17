@@ -69,7 +69,7 @@ namespace EWF
 		static void handleSceneType();
 		static std::vector<std::string> handleVariableFlag();
 
-		static void loadText();
+		static void loadFileContent();
 
 		friend struct SceneManager;
 	};

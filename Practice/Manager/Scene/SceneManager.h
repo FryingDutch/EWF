@@ -20,7 +20,9 @@ namespace EWF
 		};
 		
 		static void applyStatsChanges(size_t _i);
-		static void buildScene(char _sceneType);
+		static void renderScene();
+		static void setNextFileToRead();
+		static void applyNewStatChanges();
 		static void runGame();
 	};
 }

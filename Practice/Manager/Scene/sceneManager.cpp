@@ -11,9 +11,7 @@
 namespace EWF
 {
 	DefaultScene SceneManager::defaultScene;
-
 	Player SceneManager::m_player;
-	
 
 	void SceneManager::applyStatsChanges(size_t _i)
 	{
@@ -49,7 +47,7 @@ namespace EWF
 				switch (log_operator)
 				{
 				case '=':
-					SceneManager::m_player.setData(variableToChange, valueStr);
+					SceneManager::m_player.setData(variableToChange, (valueStr == "RESPONSE") ? FileParser::file.getResponse() : valueStr);
 					break;
 
 				default:
@@ -82,21 +80,21 @@ namespace EWF
 				std::cout << "You took " << value << " DMG. \n";
 				System::errorMessage("You have died...", true);
 			}
+		}
 
-			if (SceneManager::m_player.getHealth() > SceneManager::m_player.getMaxHealth())
-			{
-				SceneManager::m_player.setHealth(SceneManager::m_player.getMaxHealth());
-			}
+		if (SceneManager::m_player.getHealth() > SceneManager::m_player.getMaxHealth())
+		{
+			SceneManager::m_player.setHealth(SceneManager::m_player.getMaxHealth());
 		}
 	}
 
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
-	void SceneManager::buildScene(char _sceneType)
+	void SceneManager::renderScene()
 	{
 		switch (FileParser::file.getSceneType())
 		{
 		case DEFAULT:
-			defaultScene.render(FileParser::m_responseIsString, 
+			defaultScene.render(FileParser::m_responseIsString,
 				(FileParser::file.getMessage().size() > 0) 
 					? FileParser::file.getMessage()
 					: FileParser::m_message);
@@ -107,12 +105,14 @@ namespace EWF
 			System::errorMessage("Not a valid sceneType", true);
 			return;
 		}
+	}
 
+	void SceneManager::setNextFileToRead()
+	{
 		// Set the next file to read.
 		if (FileParser::m_responseIsString)
 		{
 			FileParser::m_filePath = FileParser::file.getOptionById(1).getLink();
-			applyStatsChanges(1);
 		}
 
 		else if (FileParser::file.getResponse() == "0")
@@ -124,11 +124,26 @@ namespace EWF
 		{
 			uint32_t response = stoi(FileParser::file.getResponse());
 			FileParser::m_filePath = FileParser::file.getOptionById(response).getLink();
-			applyStatsChanges(response);
 		}
 
-		if(FileParser::file.getOptions().size() <= 0)
+		if (FileParser::file.getOptions().size() <= 0)
+		{
 			System::errorMessage("No file link bound to this choice", true);
+		}
+	}
+
+	void SceneManager::applyNewStatChanges()
+	{
+		if (FileParser::m_responseIsString)
+		{
+			applyStatsChanges(1);
+		}
+
+		else
+		{
+			uint32_t response = stoi(FileParser::file.getResponse());
+			applyStatsChanges(response);
+		}
 	}
 
 	void SceneManager::runGame()
@@ -137,9 +152,10 @@ namespace EWF
 		{
 			while (System::isRunning)
 			{
-				FileParser::loadText();
-				std::cout << FileParser::file.getData();
-				buildScene(FileParser::file.getSceneType());
+				FileParser::loadFileContent();
+				SceneManager::renderScene();
+				SceneManager::applyNewStatChanges();
+				SceneManager::setNextFileToRead();
 			}
 		}
 	}

@@ -405,7 +405,7 @@ namespace EWF
 		m_responseIsString = false;
 	}
 
-	void FileParser::loadText()
+	void FileParser::loadFileContent()
 	{
 		// clear all data of last scene
 		FileParser::defaultAllData();
