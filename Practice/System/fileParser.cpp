@@ -37,13 +37,9 @@ namespace EWF
 		{"variable", '$'}
 	};
 
-	char FileParser::m_sceneType;
 	std::string FileParser::m_filePath = "first-scene";
 	std::string FileParser::m_fileContent;
-
-	std::string FileParser::m_block = "";
 	std::string FileParser::m_message = "Make a choice: ";
-	std::string FileParser::m_customMessage = "";
 
 	size_t FileParser::m_index = 0;
 	bool FileParser::m_responseIsString{ false };
@@ -116,11 +112,6 @@ namespace EWF
 		return FileParser::isFlag("-/*", {"message"});
 	}
 
-	bool FileParser::isStartBlockFlag()
-	{
-		return FileParser::isFlag("<>");
-	}
-
 	bool FileParser::isStartStoryBlockFlag()
 	{
 		return FileParser::isFlag("<story>");
@@ -149,28 +140,6 @@ namespace EWF
 	bool FileParser::isSceneTypeFlag()
 	{
 		return FileParser::isFlag("~");
-	}
-
-	void FileParser::handleBlock()
-	{
-		m_readingFlagValueMap["block"] = true;
-		StoryOption storyOption;
-
-		while (!isEndBlockFlag())
-		{
-			// if at end of file and block is still being read
-			if ((m_index + 1) == m_fileContent.size())
-			{
-				System::errorMessage("Block not closed </>", true);
-				return;
-			}
-
-			m_block += m_fileContent[m_index];
-			m_index++;
-		}
-
-		m_readingFlagValueMap["block"] = false;
-		m_block = "";
 	}
 
 	void FileParser::handleStoryBlock()
@@ -255,7 +224,7 @@ namespace EWF
 			}
 		}
 
-		nlohmann::json optionsAsJson = FileParser::file.getOptions();
+		nlohmann::json optionsAsJson = FileParser::file.getOptionsAsJson();
 		std::vector<StoryOption> optionsToApplyOn;
 
 		for (size_t i = 0; i < optionIds.size(); i++)
@@ -344,12 +313,12 @@ namespace EWF
 
 	bool FileParser::isValidSceneType()
 	{
-		return (m_sceneType == DEFAULT_SCENETYPE);
+		return (char(FileParser::file.getSceneType()) == DEFAULT_SCENETYPE);
 	}
 
 	void FileParser::handleSceneType()
 	{
-		m_sceneType = m_fileContent[m_index];
+		FileParser::file.setSceneType(m_fileContent[m_index]);
 		m_index++;
 
 		if (!FileParser::isValidSceneType())
@@ -432,7 +401,6 @@ namespace EWF
 			keyValue.second = false;
 		}
 
-		m_customMessage = "";
 		m_index = 0;
 		m_responseIsString = false;
 	}

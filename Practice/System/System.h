@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "../DataObject.h"
 
 namespace EWF
 {
@@ -24,6 +25,7 @@ namespace EWF
 		static std::string readFileIntoString(const char* _name);
 
 		static std::string getInput(std::string message = "Make a choice: ");
+		static void printDataObject(DataObject _dataObject);
 		static bool isDigit(std::string str);
 		static std::string getDate() { return date; }
 	};

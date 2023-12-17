@@ -10,8 +10,6 @@
 /*implementation for >*/ #include "SceneManager.h"
 namespace EWF
 {
-	std::string SceneManager::response = "";
-
 	DefaultScene SceneManager::defaultScene;
 
 	Player SceneManager::m_player;
@@ -39,7 +37,15 @@ namespace EWF
 				valueStr = varChanges[j][FileParser::VALUE];
 			}
 
-			if (valueStr.size() > 0) {
+			if (variableToChange == FileParser::m_variablesMap["get-item"])
+			{
+				Item newItem = SceneManager::m_player.getItemByName((valueStr == "RESPONSE") ? FileParser::file.getResponse() : valueStr);
+				newItem.setOwned(true);
+				SceneManager::m_player.updateItem(newItem);
+			}
+
+			else if (valueStr.size() > 0) 
+			{
 				switch (log_operator)
 				{
 				case '=':
@@ -77,13 +83,9 @@ namespace EWF
 				System::errorMessage("You have died...", true);
 			}
 
-			else if (variableToChange == FileParser::m_variablesMap["get-item"])
+			if (SceneManager::m_player.getHealth() > SceneManager::m_player.getMaxHealth())
 			{
-				if(valueStr == "RESPONSE"){
-					Player::setItemActive(response);
-				} else {
-					Player::setItemActive(valueStr);
-				}
+				SceneManager::m_player.setHealth(SceneManager::m_player.getMaxHealth());
 			}
 		}
 	}
@@ -91,13 +93,13 @@ namespace EWF
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::buildScene(char _sceneType)
 	{
-		switch (FileParser::m_sceneType)
+		switch (FileParser::file.getSceneType())
 		{
 		case DEFAULT:
 			defaultScene.render(FileParser::m_responseIsString, 
-				(FileParser::m_customMessage.size() > 0) ? FileParser::m_customMessage : FileParser::m_message);
-
-			response = defaultScene.getResponse();
+				(FileParser::file.getMessage().size() > 0) 
+					? FileParser::file.getMessage()
+					: FileParser::m_message);
 			break;
 
 		// TO-DO add more sceneTemplates to use.
@@ -113,15 +115,16 @@ namespace EWF
 			applyStatsChanges(1);
 		}
 
-		else if (response == "0")
+		else if (FileParser::file.getResponse() == "0")
 		{
 			FileParser::m_filePath = "menu";
 		}
 
 		else
 		{
-			FileParser::m_filePath = FileParser::file.getOptionById(stoi(response)).getLink();
-			applyStatsChanges(stoi(response));
+			uint32_t response = stoi(FileParser::file.getResponse());
+			FileParser::m_filePath = FileParser::file.getOptionById(response).getLink();
+			applyStatsChanges(response);
 		}
 
 		if(FileParser::file.getOptions().size() <= 0)
@@ -135,7 +138,8 @@ namespace EWF
 			while (System::isRunning)
 			{
 				FileParser::loadText();
-				buildScene(FileParser::m_sceneType);
+				std::cout << FileParser::file.getData();
+				buildScene(FileParser::file.getSceneType());
 			}
 		}
 	}

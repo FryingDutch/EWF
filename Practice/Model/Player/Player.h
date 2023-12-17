@@ -36,9 +36,6 @@ namespace EWF
 			this->setData(Player::ITEMS, nlohmann::json());
 		}
 
-	private:
-		static std::map<std::string, Item> items;
-
 	public:
 		static bool isMale;
 
@@ -103,21 +100,42 @@ namespace EWF
 			return this->getData(Player::DEFENSE);
 		}
 
-		static void addItem(Item _item) { items[_item.getName()] = _item; }
-		static void setItemActive(std::string itemName) { items[itemName].setOwned(true); }
-		static Item getItem(std::string _item) { return items[_item]; }
-		static Item getItemIfOwned(std::string _item) 
-		{ 
-			Item item;
-
-			if (items[_item].getOwned())
-			{
-				item = items[_item];
-			}
-
-			return item;
+		nlohmann::json getItems()
+		{
+			return this->getData(Player::ITEMS);
 		}
 
-		static std::map<std::string, Item> getItems() { return items; }
+		void addItem(Item _item) 
+		{ 
+			nlohmann::json items = this->getItems();
+			items.push_back(_item.getData());
+			this->setData(Player::ITEMS, items);
+		}
+
+		Item getItemByName(std::string _name)
+		{
+			nlohmann::json items = this->getData(Player::ITEMS);
+
+			for (auto& item : items) {
+				if (item["name"] == _name) {
+					return Item{ item };
+				}
+			}
+
+			return Item{};
+		}
+
+		void updateItem(Item _item)
+		{
+			nlohmann::json items = this->getData(Player::ITEMS);
+
+			for (auto& item : items) {
+				if (item["name"] == _item.getName()) {
+					item = _item.getData();
+				}
+			}
+
+			this->setData(Player::ITEMS, items);
+		}
 	};
 }

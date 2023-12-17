@@ -8,8 +8,6 @@ namespace EWF
 	struct SceneManager
 	{
 	private:
-		static std::string response;
-
 		static DefaultScene defaultScene;
 
 	public:

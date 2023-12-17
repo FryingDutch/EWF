@@ -9,17 +9,6 @@
 
 namespace EWF
 {
-	std::string DefaultScene::getResponse() { return response; }
-	std::string DefaultScene::getText(uint32_t _index) { return text[_index]; }
-
-	DefaultScene::DefaultScene(std::vector<std::string> _text) :
-		text(_text) {}
-
-	void DefaultScene::setText(std::vector<std::string> _text)
-	{
-		text = _text;
-	}
-
 	// Renders the scene, customized trough arguments
 	void DefaultScene::render(bool responseIsString, std::string _message)
 	{
@@ -43,14 +32,13 @@ namespace EWF
 
 			if (responseIsString)
 			{
-				response = answer;
 				break;
 			}
 				
 
 		} while (!System::isDigit(answer) || std::stoul(answer) > FileParser::file.getOptions().size() || std::stoi(answer) < 0);
 
-		response = answer;
+		FileParser::file.setResponse(answer);
 	}
 }
 

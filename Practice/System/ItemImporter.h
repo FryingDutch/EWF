@@ -3,6 +3,7 @@
 #include "../Model/Entity/Entity.h"
 #include "../Model/Player/Player.h"
 #include "../Model/Item/Item.h"
+#include "../../../Manager/Scene/SceneManager.h"
 #include "json.hpp"
 #include <iostream>
 #include <fstream>
@@ -25,8 +26,8 @@ namespace EWF
 
 			for (size_t i = 0; i < items.size(); i++)
 			{
-				Item item{ items.at(i)["id"], items.at(i)["name"], false };
-				Player::addItem(item);
+				Item item{ items[i] };
+				SceneManager::m_player.addItem(item);
 			}
 
 			return true; 

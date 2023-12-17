@@ -12,22 +12,25 @@ namespace EWF
 		const std::string STORY_OPTIONS = "story-options";
 		const std::string MESSAGE = "message";
 		const std::string RESPONSE = "response";
+		const std::string SCENETYPE = "scenetype";
 
 	public:
 		File()
 		{
-			this->setData(File::STORY, "");
+			this->setData(File::STORY, std::string{});
 			this->setData(File::STORY_OPTIONS, nlohmann::json::array());
-			this->setData(File::MESSAGE, nlohmann::json::array());
-			this->setData(File::RESPONSE, "");
+			this->setData(File::MESSAGE, std::string{});
+			this->setData(File::RESPONSE, std::string{});
+			this->setData(File::SCENETYPE, std::string{});
 		}
 
 		void resetData()
 		{
-			this->setData(File::STORY, "");
+			this->setData(File::STORY, std::string{});
 			this->setData(File::STORY_OPTIONS, nlohmann::json::array());
-			this->setData(File::MESSAGE, nlohmann::json::array());
-			this->setData(File::RESPONSE, "");
+			this->setData(File::MESSAGE, std::string{});
+			this->setData(File::RESPONSE, std::string{});
+			this->setData(File::SCENETYPE, std::string{});
 		}
 
 		void setStory(std::string _story)
@@ -45,9 +48,21 @@ namespace EWF
 			this->setData(File::STORY_OPTIONS, _options);
 		}
 
-		nlohmann::json getOptions()
+		nlohmann::json getOptionsAsJson()
 		{
 			return this->getData(File::STORY_OPTIONS);
+		}
+
+		std::vector<StoryOption> getOptions()
+		{
+			nlohmann::json options = this->getData(File::STORY_OPTIONS);
+			std::vector<StoryOption> optionObjects;
+
+			for (const auto& option : options) {
+				optionObjects.push_back(StoryOption{ option });
+			}
+
+			return optionObjects;
 		}
 
 		StoryOption getOptionById(uint32_t _id)
@@ -78,7 +93,7 @@ namespace EWF
 
 		void addOption(StoryOption _option)
 		{
-			nlohmann::json data = this->getOptions();
+			nlohmann::json data = this->getOptionsAsJson();
 			data.push_back(_option.getData());
 			this->setData(File::STORY_OPTIONS, data);
 		}
@@ -88,14 +103,31 @@ namespace EWF
 			this->setData(File::MESSAGE, _message);
 		}
 
+		std::string getMessage()
+		{
+			return this->getData(File::MESSAGE);
+		}
+
+		void setSceneType(char _sceneType)
+		{
+			std::string sceneType{ _sceneType };
+			this->setData(File::SCENETYPE, sceneType);
+		}
+
+		char getSceneType()
+		{
+			std::string sceneType = this->getData(File::SCENETYPE);
+			return sceneType.size() > 0 ? sceneType[0] : char{};
+		}
+
 		void setResponse(std::string _response)
 		{
 			this->setData(File::RESPONSE, _response);
 		}
 
-		std::string getMessage()
+		std::string getResponse()
 		{
-			return this->getData(File::MESSAGE);
+			return this->getData(File::RESPONSE);
 		}
 	};
 }

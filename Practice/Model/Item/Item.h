@@ -3,39 +3,51 @@
 #include "../Entity/Entity.h"
 #include "../Player/Player.h"
 #include "json.hpp"
-
+#include "../../../DataObject.h"
 
 namespace EWF
 {
-	class Item : public Entity
+	class Item : public DataObject
 	{
-	private:
-		std::string name{ "" };
-
-	private:
-		bool owned{ false };
-		bool oneUse{ false };
+	public:
+		const std::string ID = "id";
+		const std::string NAME = "name";
+		const std::string OWNED = "owned";
 
 	public:
-		Item() : Entity(0) {};
+		Item(nlohmann::json _data) :
+			DataObject(_data) {}
 
-		Item(int _ID, std::string _name, bool _oneUse) :
-			Entity(_ID), name(_name), oneUse(_oneUse)
-		{}
+		Item() 
+		{
+			this->setData(Item::ID, NULL);
+			this->setData(Item::NAME, std::string{});
+			this->setData(Item::OWNED, false);
+		};
+
+		uint32_t getId()
+		{
+			return this->getData(Item::ID);
+		}
+
+		void setName(std::string _name)
+		{
+			this->setData(Item::NAME, _name);
+		}
 
 		std::string getName()
 		{
-			return this->name;
+			return this->getData(Item::NAME);
 		}
 
 		void setOwned(bool _owned)
 		{
-			this->owned = _owned;
+			this->setData(Item::OWNED, _owned);
 		}
 
 		bool getOwned()
 		{
-			return this->owned;
+			return this->getData(Item::OWNED);
 		}
 	};
 }

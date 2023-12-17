@@ -1,26 +1,32 @@
 [
     {
         "id":1,
-        "name":"axe"
+        "name":"axe",
+        "owned": false
     },
     {
         "id":2,
-        "name":"knife"
+        "name":"knife",
+        "owned": false
     },
     {
         "id":3,
-        "name":"spoon"
+        "name":"spoon",
+        "owned": false
     },
     {
         "id":4,
-        "name":"bread"
+        "name":"bread",
+        "owned": false
     },
     {
         "id":5,
-        "name":"water"
+        "name":"water",
+        "owned": false
     },
     {
         "id":6,
-        "name":"key"
+        "name":"key",
+        "owned": false
     }
 ]

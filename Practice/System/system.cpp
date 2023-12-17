@@ -74,4 +74,9 @@ namespace EWF
 
 		return answer;
 	}
+
+	void System::printDataObject(DataObject _dataObject)
+	{
+		std::cout << std::setw(4) << _dataObject.getData() << "\n";
+	}
 }

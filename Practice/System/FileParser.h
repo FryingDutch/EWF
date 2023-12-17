@@ -12,7 +12,6 @@ namespace EWF
 	private:
 		static nlohmann::json m_files;
 
-		static char m_sceneType;
 		static std::string m_fileContent;
 		static size_t m_index;
 		static bool m_responseIsString;
@@ -20,10 +19,7 @@ namespace EWF
 		static std::map<std::string, std::string> m_variablesMap;
 		static std::map<std::string, bool> m_readingFlagValueMap;
 
-		static std::string m_block;
 		static std::string m_message;
-		static std::string m_customMessage;
-
 		static std::string m_goToFile;
 		static std::string m_filePath;
 
@@ -55,11 +51,9 @@ namespace EWF
 		static bool isStartMessageFlag();
 		static bool isEndMessageFlag();
 
-		static bool isStartBlockFlag();
-		static bool isEndBlockFlag();
-
 		static bool isStartStoryBlockFlag();
 		static bool isStartOptionBlockFlag();
+		static bool isEndBlockFlag();
 
 		static void handleStoryBlock();
 		static void handleOptionBlock();
@@ -70,12 +64,10 @@ namespace EWF
 		static bool isSceneTypeFlag();
 		
 		static bool isValidSceneType();
-		static void handleBlock();
 		static void handleFileLink();
 		static void handleMessage();
 		static void handleSceneType();
 		static std::vector<std::string> handleVariableFlag();
-		static void handleFlags();
 
 		static void loadText();
 
