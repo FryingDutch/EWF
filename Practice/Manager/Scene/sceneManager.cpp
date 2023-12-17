@@ -172,10 +172,7 @@ namespace EWF
 		std::vector<std::string> textBlocks = { FileParser::file.getStory() };
 		for (size_t i = 0; i < FileParser::file.getOptions().size(); i++)
 		{
-			if (FileParser::file.getOptionById(i).getText() != "") {
-				textBlocks.push_back(FileParser::file.getOptionById(i).getText());
-			}
-			
+			textBlocks.push_back(FileParser::file.getOptionById(i).getText());
 		}
 
 		switch (FileParser::m_sceneType)

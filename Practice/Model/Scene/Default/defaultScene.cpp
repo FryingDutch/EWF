@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "../../../System/System.h"
+#include "../../../System/FileParser.h"
 #include "../../../Model/Player/Player.h"
 #include "../../../Manager/Scene/SceneManager.h"
 #include "../../SceneInterface.h"
@@ -30,44 +31,11 @@ namespace EWF
 			// Clear the screen at start, or after a bad input
 			system("cls");
 			this->printStatsBanner();
-			for (size_t i = 0; i < text.size(); i++)
+
+			std::cout << FileParser::file.getStory() << "\n\n";
+			for (size_t i = 1; i <= FileParser::file.getOptions().size(); i++)
 			{
-				// Check if the string provided is not the defaulted empty one
-				if (i < text.size() && !text[i].empty())
-				{
-					if (!responseIsString)
-					{
-						switch (i)
-						{
-						case STORY:
-							std::cout << text[STORY] << "\n\n";
-							break;
-
-						default:
-							std::cout << "\t" << i << ") " << text[i] << "\n";
-							break;
-						}
-					}
-
-					else
-					{
-						switch (i)
-						{
-						case STORY:
-							std::cout << text[STORY] << "\n\n";
-							break;
-
-						default:
-							break;
-						}
-					}
-				}
-
-				else
-				{
-					std::cout << "\n";
-					break;
-				}
+				std::cout << "\t" << i << ") " << FileParser::file.getOptionById(i).getText() << "\n";
 			}
 
 			std::cout << "\n";

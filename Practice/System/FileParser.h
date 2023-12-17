@@ -19,7 +19,6 @@ namespace EWF
 			FileLink() = default;
 		};
 
-		static File file;
 		static nlohmann::json m_files;
 
 		static char m_sceneType;
@@ -42,6 +41,7 @@ namespace EWF
 
 	public:
 		FileParser();
+		static File file;
 		
 		enum
 		{
