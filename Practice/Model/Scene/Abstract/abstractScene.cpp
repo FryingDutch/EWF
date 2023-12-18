@@ -10,7 +10,7 @@ namespace EWF {
 	// Renders the banner holding all the statistics
 	void AbstractScene::printStatsBanner()
 	{
-		static const uint8_t bannerWidth = 100;
+		static const uint8_t bannerWidth = 110;
 
 		// First row
 		for (size_t i = 0; i < bannerWidth; i++)

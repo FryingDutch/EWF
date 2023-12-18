@@ -1,38 +1,68 @@
 [
-    {
-        "id":1,
-        "name":"axe",
-        "qty": 0,
-        "owned": true
-    },
-    {
-        "id":2,
-        "name":"knife",
-        "qty": 0,
-        "owned": true
-    },
-    {
-        "id":3,
-        "name":"spoon",
-        "qty": 8,
-        "owned": true
-    },
-    {
-        "id":4,
-        "name":"bread",
-        "qty": 0,
-        "owned": true
-    },
-    {
-        "id":5,
-        "name":"water",
-        "qty": 3,
-        "owned": true
-    },
-    {
-        "id":6,
-        "name":"key",
-        "qty": 0,
-        "owned": true
-    }
+  {
+    "id": 1,
+    "name": "Bronze Axe",
+    "qty": 1,
+    "owned": true
+  },
+  {
+    "id": 2,
+    "name": "Sharp Knife",
+    "qty": 1,
+    "owned": true
+  },
+  {
+    "id": 3,
+    "name": "Dirty Spoon",
+    "qty": 1018,
+    "owned": true
+  },
+  {
+    "id": 6,
+    "name": "Water",
+    "qty": 97,
+    "owned": true
+  },
+  {
+    "id": 7,
+    "name": "Keyring",
+    "qty": 1,
+    "owned": true
+  },
+  {
+    "id": 8,
+    "name": "Wooden Bow",
+    "qty": 1,
+    "owned": true
+  },
+  {
+    "id": 9,
+    "name": "Net",
+    "qty": 1,
+    "owned": true
+  },
+  {
+    "id": 10,
+    "name": "Fishing Rod",
+    "qty": 1,
+    "owned": true
+  },
+  {
+    "id": 11,
+    "name": "Health Potion",
+    "qty": 31,
+    "owned": true
+  },
+  {
+    "id": 12,
+    "name": "Magicka Potion",
+    "qty": 101,
+    "owned": true
+  },
+  {
+    "id": 13,
+    "name": "Fried Chicken",
+    "qty": 786,
+    "owned": true
+  }
 ]
