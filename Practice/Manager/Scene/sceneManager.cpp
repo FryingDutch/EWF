@@ -109,6 +109,7 @@ namespace EWF
 			break;
 
 		case INTRO:
+			inventoryScene = InventoryScene();
 			inventoryScene.render(FileParser::m_responseIsString,
 				(FileParser::file.getMessage().size() > 0)
 				? FileParser::file.getMessage()

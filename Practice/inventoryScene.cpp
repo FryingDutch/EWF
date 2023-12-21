@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "../../../System/System.h"
 #include "../../../Manager/Scene/SceneManager.h"
 #include "InventoryScene.h"
@@ -9,115 +10,103 @@
 
 namespace EWF
 {
-	void InventoryScene::render(bool responseIsString, std::string _message)
+	InventoryScene::InventoryScene() :
+		m_items(SceneManager::m_player.getOwnedItems()), sizeOflongestNameLeftColumn(0), sizeOflongestNameRightColumn(0), sizeOflongestQtyLeftColumn(0), sizeOflongestQtyRightColumn(0) {}
+
+	void InventoryScene::setLocalItemData(Item& _item, uint32_t& _lastId, uint32_t& sizeOfLongestName, uint32_t& sizeOfLongestQty)
 	{
-		system("cls");
-		this->printStatsBanner();
-		
-		std::vector<Item> items = SceneManager::m_player.getOwnedItems();
+		_item.setData("render-id", ++_lastId);
+		uint32_t nameSize = _item.getName().size();
+		uint32_t renderId = uint32_t(_item.getData("render-id"));
+		uint32_t qtySize = std::to_string(_item.getQuantity()).size();
+
+		_item.setData("name-size", nameSize);
+		_item.setData("id-size", std::to_string(renderId).size());
+		_item.setData("item-qty-string", "(x" + std::to_string(_item.getQuantity()) + ")");
+
+		sizeOfLongestName = (nameSize > sizeOfLongestName) 
+			? nameSize 
+			: sizeOfLongestName;
+
+		sizeOfLongestQty = (qtySize > sizeOfLongestQty) 
+			? qtySize 
+			: sizeOfLongestQty;
+	}
+
+	void InventoryScene::setLocalItemsData()
+	{
+		uint32_t lastId = 0;
+		uint32_t largestLeftId = round(long double(m_items.size()) / 2);
+
+		for (size_t i = 0; lastId < largestLeftId && i < m_items.size(); i+=2)
+		{
+			m_items[i].setData("isEven", true);
+			setLocalItemData(m_items[i], lastId, this->sizeOflongestNameLeftColumn, this->sizeOflongestQtyLeftColumn);
+		}
+
+		for (size_t i = 1; lastId < m_items.size() && i <= m_items.size(); i += 2)
+		{
+			m_items[i].setData("isEven", false);
+			setLocalItemData(m_items[i], lastId, this->sizeOflongestNameRightColumn, this->sizeOflongestQtyRightColumn);
+		}
+	}
+
+	void InventoryScene::renderItems()
+	{
 		uint32_t insertEnterCounter = 3;
 		uint32_t itemRenderCount = 1;
-		uint32_t longestNameSizeEven = 0;
-		uint32_t longestQtySizeEven = 0;
-		uint32_t longestNameSizeUneven = 0;
-		uint32_t longestQtySizeUneven = 0;
-		uint32_t longestIdSize = std::to_string(items.size()).size();
-		uint32_t lastEvenId = 0;
-		uint32_t lastUnevenId = 0;
 
+		uint32_t longestIdSizeLeft = std::to_string(uint32_t(round(long double(m_items.size()) / 2))).size();
+		uint32_t longestIdSizeRight = std::to_string((m_items.size() % 2 == 0) ? m_items.size() : m_items.size() - 1).size();
 
-		uint32_t lastId = 0;
-		std::vector<Item> unevenIdItems;
+		static const uint32_t providedSpace = 40;
+		uint32_t providedSpaceEven = providedSpace + this->sizeOflongestNameLeftColumn + this->sizeOflongestQtyRightColumn;
+		uint32_t providedSpaceUneven = providedSpace + this->sizeOflongestNameRightColumn + this->sizeOflongestQtyRightColumn;
 
-		for (size_t i = 0; i < items.size(); i++)
+		uint32_t qtyOffsetEven = sizeOflongestNameLeftColumn + 2;
+		uint32_t qtyOffsetUneven = sizeOflongestNameRightColumn + 2;
+
+		std::cout << "\t\t";
+		for (size_t i = 0; i < m_items.size(); i++)
 		{
+			std::cout << "[" << std::to_string(uint32_t(m_items[i].getData("render-id"))) << "] ";
 
-			if ((i + 2) % 2 == 0)
-			{
-				items[i].setData("render-id", ++lastId);
-				items[i].setData("isEven", true);
-				lastEvenId = lastId;
-			}
-
-			else
-			{
-				items[i].setData("original-index", i);
-				items[i].setData("isEven", false);
-				unevenIdItems.push_back(items[i]);
-			}
-		}
-
-		for (size_t i = 0; i < unevenIdItems.size(); i++)
-		{
-			items[unevenIdItems[i].getData("original-index")].setData("render-id", ++lastId);
-			lastUnevenId = lastId;
-		}
-
-		uint32_t longestIdSizeEven = std::to_string(lastEvenId).size();
-		uint32_t longestIdSizeUneven = std::to_string(lastUnevenId).size();
-
-		for (size_t i = 0; i < items.size(); i++)
-		{
-			uint32_t renderId = uint32_t(items[i].getData("render-id"));
-			uint32_t nameSize = items[i].getName().size();
-			uint32_t qtySize = std::to_string(items[i].getQuantity()).size();
-			uint32_t idSize = std::to_string(renderId).size();
-
-			items[i].setData("name-size", nameSize);
-			items[i].setData("id-size", idSize);
-			items[i].setData("item-qty-string", "(x" + std::to_string(items[i].getQuantity()) + ")");
-
-			if (items[i].getData("isEven"))
-			{
-				longestNameSizeEven = (nameSize > longestNameSizeEven) ? nameSize : longestNameSizeEven;
-				longestQtySizeEven = (qtySize > longestQtySizeEven) ? qtySize : longestQtySizeEven;
-			}
-			else
-			{
-				longestNameSizeUneven = (nameSize > longestNameSizeUneven) ? nameSize : longestNameSizeUneven;
-				longestQtySizeUneven = (qtySize > longestQtySizeUneven) ? qtySize : longestQtySizeUneven;
-			}
-		}
-
-		static const uint32_t providedSpace = 25;
-		uint32_t providedSpaceEven = providedSpace + longestNameSizeEven + longestQtySizeEven;
-		uint32_t providedSpaceUneven = providedSpace + longestNameSizeUneven + longestQtySizeUneven;
-
-		uint32_t qtyOffsetEven = longestNameSizeEven + 2;
-		uint32_t qtyOffsetUneven = longestNameSizeUneven + 2;
-
-		std::cout << "\t";
-		for (size_t i = 0; i < items.size(); i++)
-		{
-			std::cout << "[" << std::to_string(uint32_t(items[i].getData("render-id"))) << "] ";
-
-			uint32_t longestIdSize = (items[i].getData("isEven") ? longestIdSizeEven : longestIdSizeUneven);
-			for (size_t j = 0; j < (longestIdSize - items[i].getData("id-size")); j++)
+			uint32_t longestIdSize = (m_items[i].getData("isEven") ? longestIdSizeLeft : longestIdSizeRight);
+			for (size_t j = 0; j < (longestIdSize - m_items[i].getData("id-size")); j++)
 			{
 				std::cout << " ";
 			}
-			std::cout << items[i].getName();
+			std::cout << m_items[i].getName();
 
-			uint32_t spacesNeeded = providedSpace - std::string(items[i].getData("item-qty-string")).size() - items[i].getData("name-size");
-			uint32_t qtyOffset = (items[i].getData("isEven") ? qtyOffsetEven : qtyOffsetUneven);
+			uint32_t spacesNeeded = providedSpace - std::string(m_items[i].getData("item-qty-string")).size() - m_items[i].getData("name-size");
+			uint32_t qtyOffset = (m_items[i].getData("isEven") ? qtyOffsetEven : qtyOffsetUneven);
 
 			for (size_t j = 1; j <= spacesNeeded; j++)
 			{
-				if (j + items[i].getData("name-size") == qtyOffset)
+				if (j + m_items[i].getData("name-size") == qtyOffset)
 				{
-					std::cout << std::string(items[i].getData("item-qty-string"));
+					std::cout << std::string(m_items[i].getData("item-qty-string"));
 				}
 				std::cout << " ";
 			}
 
 			if (insertEnterCounter++ % 2 == 0)
 			{
-				std::cout << "\n\t";
+				std::cout << "\n\t\t";
 			}
 		}
+	}
 
-		std::cout << "\n\n";
-		FileParser::file.setResponse(System::getInput(_message));
+	void InventoryScene::render(bool responseIsString, std::string _message)
+	{
+		system("cls");
+		this->printStatsBanner();
+		
+		setLocalItemsData();	
+		renderItems();
+
+		std::cout << "\n";
+		FileParser::file.setResponse(System::getInput("\t\t"+_message));
 	}
 }
 
