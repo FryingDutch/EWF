@@ -24,6 +24,9 @@ namespace EWF
 		static std::string m_filePath;
 
 	public:
+		static std::string m_fileArgument;
+
+	public:
 		FileParser();
 		static File file;
 		

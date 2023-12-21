@@ -7,6 +7,7 @@
 #include "json.hpp"
 #include "../../Model/Player/Player.h"
 #include "../../../InventoryScene.h"
+#include "../../../ItemSpecScene.h"
 
 /*implementation for >*/ #include "SceneManager.h"
 namespace EWF
@@ -99,6 +100,8 @@ namespace EWF
 	// Build the scene according to the _sceneType (Which is provided by the file with ~ prefix)
 	void SceneManager::renderScene()
 	{
+		ItemSpecScene itemSpecScene;
+
 		switch (FileParser::file.getSceneType())
 		{
 		case DEFAULT:
@@ -111,6 +114,13 @@ namespace EWF
 		case INTRO:
 			inventoryScene = InventoryScene();
 			inventoryScene.render(FileParser::m_responseIsString,
+				(FileParser::file.getMessage().size() > 0)
+				? FileParser::file.getMessage()
+				: FileParser::m_message);
+			break;
+
+		case 'S':
+			itemSpecScene.render(FileParser::m_responseIsString,
 				(FileParser::file.getMessage().size() > 0)
 				? FileParser::file.getMessage()
 				: FileParser::m_message);
@@ -140,6 +150,14 @@ namespace EWF
 		{
 			uint32_t response = stoi(FileParser::file.getResponse());
 			FileParser::m_filePath = FileParser::file.getOptionById(response).getLink();
+			std::string itemSpecFilePath = "item\\spec\\";
+			size_t _indexPos = FileParser::m_filePath.find(itemSpecFilePath);
+
+			if (_indexPos != std::string::npos)
+			{
+				FileParser::m_fileArgument = FileParser::m_filePath.substr(_indexPos + itemSpecFilePath.length());
+				FileParser::m_filePath = "item\\spec\\id";
+			}
 		}
 
 		if (FileParser::file.getOptions().size() <= 0)

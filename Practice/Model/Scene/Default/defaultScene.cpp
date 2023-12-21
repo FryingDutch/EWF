@@ -24,11 +24,11 @@ namespace EWF
 			std::cout << FileParser::file.getStory() << "\n\n";
 			for (size_t i = 1; i <= FileParser::file.getOptions().size(); i++)
 			{
-				std::cout << "\t" << i << ") " << FileParser::file.getOptionById(i).getText() << "\n";
+				std::cout << "\t\t" << "[" << i << "] " << FileParser::file.getOptionById(i).getText() << "\n";
 			}
 
-			std::cout << "\n";
-			answer = System::getInput(_message);
+			std::cout << "\n\n";
+			answer = System::getInput("\t" + _message);
 
 			if (responseIsString)
 			{

@@ -38,6 +38,7 @@ namespace EWF
 	};
 
 	std::string FileParser::m_filePath = "first-scene";
+	std::string FileParser::m_fileArgument = "";
 	std::string FileParser::m_fileContent;
 	std::string FileParser::m_message = "Make a choice: ";
 
@@ -150,7 +151,7 @@ namespace EWF
 			// if at end of file and block is still being read
 			if ((m_index + 1) == m_fileContent.size())
 			{
-				System::errorMessage("Block not closed </>", true);
+				System::errorMessage("Story Block not closed </>", true);
 				return;
 			}
 
@@ -170,10 +171,11 @@ namespace EWF
 
 		while (!isEndBlockFlag())
 		{
-			// if at end of file and block is still being read
+			// If at end of file and block is still being read
 			if ((m_index + 1) == m_fileContent.size())
 			{
-				System::errorMessage("Block not closed </>", true);
+				std::string msg = "Option Block " + std::to_string(currentOptionCount) + " not closed < / >";
+				System::errorMessage(msg.c_str(), true);
 				return;
 			}
 
@@ -313,7 +315,7 @@ namespace EWF
 
 	bool FileParser::isValidSceneType()
 	{
-		return (char(FileParser::file.getSceneType()) == DEFAULT_SCENETYPE || char(FileParser::file.getSceneType()) == INTRO_SCENETYPE);
+		return (char(FileParser::file.getSceneType()) == DEFAULT_SCENETYPE || char(FileParser::file.getSceneType()) == INTRO_SCENETYPE || char(FileParser::file.getSceneType() == 'S'));
 	}
 
 	void FileParser::handleSceneType()

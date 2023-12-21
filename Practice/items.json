@@ -1,68 +1,16 @@
 [
   {
     "id": 1,
-    "name": "Bronze Axe",
+    "name": "Axe",
     "qty": 1,
-    "owned": true
+    "owned": true,
+    "description": "Worn by hands weathered by ancient trees, a testament to countless timbers felled."
   },
   {
     "id": 2,
     "name": "Sharp Knife",
     "qty": 1,
-    "owned": true
-  },
-  {
-    "id": 3,
-    "name": "Dirty Spoon",
-    "qty": 1018,
-    "owned": true
-  },
-  {
-    "id": 6,
-    "name": "Water",
-    "qty": 97,
-    "owned": true
-  },
-  {
-    "id": 7,
-    "name": "Keyring",
-    "qty": 1,
-    "owned": true
-  },
-  {
-    "id": 8,
-    "name": "Wooden Bow",
-    "qty": 1,
-    "owned": true
-  },
-  {
-    "id": 9,
-    "name": "Net",
-    "qty": 1,
-    "owned": true
-  },
-  {
-    "id": 10,
-    "name": "Fishing Rod",
-    "qty": 1,
-    "owned": true
-  },
-  {
-    "id": 11,
-    "name": "Health Potion",
-    "qty": 31,
-    "owned": true
-  },
-  {
-    "id": 12,
-    "name": "Magicka Potion",
-    "qty": 101,
-    "owned": true
-  },
-  {
-    "id": 13,
-    "name": "Fried Chicken",
-    "qty": 786,
-    "owned": true
+    "owned": true,
+    "description": "A lethal companion, once wielded by a hired hand now at rest."
   }
 ]

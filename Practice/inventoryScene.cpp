@@ -15,21 +15,21 @@ namespace EWF
 
 	void InventoryScene::setLocalItemData(Item& _item, uint32_t& _lastId, uint32_t& sizeOfLongestName, uint32_t& sizeOfLongestQty)
 	{
-		_item.setData("render-id", ++_lastId);
+		uint32_t renderId = ++_lastId;
+		_item.setData("render-id", renderId);
 		uint32_t nameSize = _item.getName().size();
-		uint32_t renderId = uint32_t(_item.getData("render-id"));
 		uint32_t qtySize = std::to_string(_item.getQuantity()).size();
 
 		_item.setData("name-size", nameSize);
 		_item.setData("id-size", std::to_string(renderId).size());
 		_item.setData("item-qty-string", "(x" + std::to_string(_item.getQuantity()) + ")");
 
-		sizeOfLongestName = (nameSize > sizeOfLongestName) 
-			? nameSize 
+		sizeOfLongestName = (nameSize > sizeOfLongestName)
+			? nameSize
 			: sizeOfLongestName;
 
-		sizeOfLongestQty = (qtySize > sizeOfLongestQty) 
-			? qtySize 
+		sizeOfLongestQty = (qtySize > sizeOfLongestQty)
+			? qtySize
 			: sizeOfLongestQty;
 	}
 
@@ -71,7 +71,10 @@ namespace EWF
 		{
 			std::cout << "[" << std::to_string(uint32_t(m_items[i].getData("render-id"))) << "] ";
 
-			uint32_t longestIdSize = (m_items[i].getData("isEven") ? longestIdSizeLeft : longestIdSizeRight);
+			uint32_t longestIdSize = (m_items[i].getData("isEven") 
+				? longestIdSizeLeft 
+				: longestIdSizeRight);
+
 			for (size_t j = 0; j < (longestIdSize - m_items[i].getData("id-size")); j++)
 			{
 				std::cout << " ";
@@ -79,7 +82,9 @@ namespace EWF
 			std::cout << m_items[i].getName();
 
 			uint32_t spacesNeeded = providedSpace - std::string(m_items[i].getData("item-qty-string")).size() - m_items[i].getData("name-size");
-			uint32_t qtyOffset = (m_items[i].getData("isEven") ? qtyOffsetEven : qtyOffsetUneven);
+			uint32_t qtyOffset = m_items[i].getData("isEven") 
+				? qtyOffsetEven 
+				: qtyOffsetUneven;
 
 			for (size_t j = 1; j <= spacesNeeded; j++)
 			{
@@ -102,11 +107,27 @@ namespace EWF
 		system("cls");
 		this->printStatsBanner();
 		
-		setLocalItemsData();	
-		renderItems();
+		this->setLocalItemsData();	
+		this->renderItems();
 
 		std::cout << "\n";
-		FileParser::file.setResponse(System::getInput("\t\t"+_message));
+		std::string response = System::getInput("\t\t" + _message);
+
+		for (size_t i = 0; i < m_items.size(); i++)
+		{
+			if (m_items[i].getData("render-id") == stoi(response)) {
+				response = std::to_string(m_items[i].getId());
+				break;
+			}
+		}
+
+		FileParser::file.setResponse(response);
+
+		StoryOption itemSpecificationPage;
+		itemSpecificationPage.setId(stoi(response));
+		itemSpecificationPage.setLink("item\\spec\\" + response);
+		FileParser::file.addOption(itemSpecificationPage);
+
 	}
 }
 

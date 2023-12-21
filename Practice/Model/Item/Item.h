@@ -42,6 +42,16 @@ namespace EWF
 			return this->getData(Item::NAME);
 		}
 
+		void setDescription(std::string _desc)
+		{
+			this->setData("description", _desc);
+		}
+
+		std::string getDescription()
+		{
+			return this->getData("description");
+		}
+
 		void setQuantity(uint32_t _qty)
 		{
 			this->setData(Item::QTY, _qty);
