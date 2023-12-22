@@ -157,7 +157,7 @@ namespace EWF
 			nlohmann::json items = this->getData(Player::ITEMS);
 
 			for (auto& item : items) {
-				if (item["name"] == _item.getName()) {
+				if (item["id"] == _item.getId()) {
 					item = _item.getData();
 				}
 			}

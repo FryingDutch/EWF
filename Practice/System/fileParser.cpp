@@ -37,7 +37,7 @@ namespace EWF
 		{"variable", '$'}
 	};
 
-	std::string FileParser::m_filePath = "first-scene";
+	std::string FileParser::m_filePath = "base";
 	std::string FileParser::m_fileArgument = "";
 	std::string FileParser::m_fileContent;
 	std::string FileParser::m_message = "Make a choice: ";
@@ -437,4 +437,6 @@ namespace EWF
 				FileParser::handleSceneType();
 		}
 	}
+
+
 }

@@ -14,21 +14,33 @@ namespace EWF
 	{
 		static std::string answer;
 		static int32_t argc;
-		
+		static const uint32_t divider = System::getTerminalWidth() > 140 ? 3 : 4;
+
 		do
 		{
 			// Clear the screen at start, or after a bad input
 			system("cls");
 			this->printStatsBanner();
 
-			std::cout << FileParser::file.getStory() << "\n\n";
+			std::vector<std::string> lines;
+
+			std::cout << FileParser::file.formatStoryText(divider) << "\n";
 			for (size_t i = 1; i <= FileParser::file.getOptions().size(); i++)
 			{
-				std::cout << "\t\t" << "[" << i << "] " << FileParser::file.getOptionById(i).getText() << "\n";
+				for (size_t i = 0; i < System::getTerminalWidth() / divider; i++)
+				{
+					std::cout << " ";
+				}
+
+				std::cout << "[" << i << "] " << FileParser::file.getOptionById(i).getText() << "\n";
 			}
 
 			std::cout << "\n\n";
-			answer = System::getInput("\t" + _message);
+			for (size_t i = 0; i < System::getTerminalWidth() / divider; i++)
+			{
+				std::cout << " ";
+			}
+			answer = System::getInput(_message);
 
 			if (responseIsString)
 			{

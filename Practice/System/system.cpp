@@ -10,6 +10,8 @@ namespace EWF
 {
 	std::ifstream System::readFiles;
 	bool System::isRunning = true;
+	uint32_t System::terminalHeight;
+	uint32_t System::terminalWidth;
 
 	void System::errorMessage(const char* message, bool _hardError)
 	{
@@ -42,8 +44,11 @@ namespace EWF
 			return ss.str();
 		}
 		else
-			errorMessage("File not found", true);
-
+		{
+			std::string fileName{ _name };
+			std::string msg = "File " + fileName + " not found";
+			errorMessage(msg.c_str(), true);
+		}
 		return ss.str(); // Will never reach, but muffles compiler for non returning path.
 	}
 

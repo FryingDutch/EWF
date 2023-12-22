@@ -46,6 +46,7 @@ namespace EWF
 					: valueStr);
 
 				newItem.setOwned(true);
+				newItem.setQuantity(1);
 				SceneManager::m_player.updateItem(newItem);
 			}
 
@@ -150,7 +151,7 @@ namespace EWF
 		{
 			uint32_t response = stoi(FileParser::file.getResponse());
 			FileParser::m_filePath = FileParser::file.getOptionById(response).getLink();
-			std::string itemSpecFilePath = "item\\spec\\";
+			static const std::string itemSpecFilePath = "item\\spec\\";
 			size_t _indexPos = FileParser::m_filePath.find(itemSpecFilePath);
 
 			if (_indexPos != std::string::npos)
@@ -186,6 +187,7 @@ namespace EWF
 		{
 			while (System::isRunning)
 			{
+				System::resetDimensions();
 				FileParser::loadFileContent();
 				SceneManager::renderScene();
 				SceneManager::applyNewStatChanges();

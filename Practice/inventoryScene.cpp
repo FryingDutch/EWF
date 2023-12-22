@@ -16,10 +16,10 @@ namespace EWF
 	void InventoryScene::setLocalItemData(Item& _item, uint32_t& _lastId, uint32_t& sizeOfLongestName, uint32_t& sizeOfLongestQty)
 	{
 		uint32_t renderId = ++_lastId;
-		_item.setData("render-id", renderId);
 		uint32_t nameSize = _item.getName().size();
 		uint32_t qtySize = std::to_string(_item.getQuantity()).size();
 
+		_item.setData("render-id", renderId);
 		_item.setData("name-size", nameSize);
 		_item.setData("id-size", std::to_string(renderId).size());
 		_item.setData("item-qty-string", "(x" + std::to_string(_item.getQuantity()) + ")");
@@ -54,19 +54,23 @@ namespace EWF
 	void InventoryScene::renderItems()
 	{
 		uint32_t insertEnterCounter = 3;
-		uint32_t itemRenderCount = 1;
+		uint32_t itemRenderCount    = 1;
 
-		uint32_t longestIdSizeLeft = std::to_string(uint32_t(round(long double(m_items.size()) / 2))).size();
-		uint32_t longestIdSizeRight = std::to_string((m_items.size() % 2 == 0) ? m_items.size() : m_items.size() - 1).size();
+		uint32_t longestIdSizeLeft  = std::to_string(uint32_t(round(long double(m_items.size()) / 2))).size();
+		uint32_t longestIdSizeRight = std::to_string((m_items.size() % 2 == 0) 
+			? m_items.size() 
+			: m_items.size() - 1).size();
 
 		static const uint32_t providedSpace = 40;
-		uint32_t providedSpaceEven = providedSpace + this->sizeOflongestNameLeftColumn + this->sizeOflongestQtyRightColumn;
-		uint32_t providedSpaceUneven = providedSpace + this->sizeOflongestNameRightColumn + this->sizeOflongestQtyRightColumn;
 
-		uint32_t qtyOffsetEven = sizeOflongestNameLeftColumn + 2;
+		uint32_t qtyOffsetEven	 = sizeOflongestNameLeftColumn + 2;
 		uint32_t qtyOffsetUneven = sizeOflongestNameRightColumn + 2;
 
-		std::cout << "\t\t";
+		for (size_t i = 0; i < System::getTerminalWidth() / 4; i++)
+		{
+			std::cout << " ";
+		}
+
 		for (size_t i = 0; i < m_items.size(); i++)
 		{
 			std::cout << "[" << std::to_string(uint32_t(m_items[i].getData("render-id"))) << "] ";
@@ -97,37 +101,65 @@ namespace EWF
 
 			if (insertEnterCounter++ % 2 == 0)
 			{
-				std::cout << "\n\t\t";
+				std::cout << "\n";
+				for (size_t i = 0; i < System::getTerminalWidth() / 4; i++)
+				{
+					std::cout << " ";
+				}
 			}
 		}
 	}
 
 	void InventoryScene::render(bool responseIsString, std::string _message)
-	{
-		system("cls");
-		this->printStatsBanner();
-		
+	{	
 		this->setLocalItemsData();	
-		this->renderItems();
 
-		std::cout << "\n";
-		std::string response = System::getInput("\t\t" + _message);
+		static std::string response = "";
+		std::string renderId;
 
-		for (size_t i = 0; i < m_items.size(); i++)
-		{
-			if (m_items[i].getData("render-id") == stoi(response)) {
-				response = std::to_string(m_items[i].getId());
-				break;
+		do {
+			system("cls");
+			this->printStatsBanner();
+			this->renderItems();
+
+			std::cout << "\n\n";
+
+			for (size_t i = 0; i < System::getTerminalWidth() / 6; i++)
+			{
+				std::cout << " ";
 			}
+
+			renderId = System::getInput(_message);
+
+			for (size_t i = 0; i < m_items.size(); i++)
+			{
+				if (m_items[i].getData("render-id") == stoi(renderId)) {
+					response = std::to_string(m_items[i].getId());
+					break;
+				}
+			}
+
+			if (response == "" || renderId == "0")
+			{
+				response = renderId;
+			}
+
+		} while (!System::isDigit(response) || std::stoul(renderId) > m_items.size() || std::stoi(response) < 0);
+
+		StoryOption nextSceneOption;
+		if (std::stoi(response) == 0)
+		{
+			nextSceneOption.setId(1);
+			nextSceneOption.setLink("menu");
 		}
 
+		else 
+		{
+			nextSceneOption.setId(stoi(response));
+			nextSceneOption.setLink("item\\spec\\" + response);
+		}
+		FileParser::file.addOption(nextSceneOption);
 		FileParser::file.setResponse(response);
-
-		StoryOption itemSpecificationPage;
-		itemSpecificationPage.setId(stoi(response));
-		itemSpecificationPage.setLink("item\\spec\\" + response);
-		FileParser::file.addOption(itemSpecificationPage);
-
 	}
 }
 

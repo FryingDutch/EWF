@@ -5,33 +5,50 @@
 #include "AbstractScene.h"
 #include "../../../Model/Player/Player.h"
 #include "../../../Manager/Scene/SceneManager.h";
+#include "../../../System/System.h"
 
 namespace EWF {
 	// Renders the banner holding all the statistics
 	void AbstractScene::printStatsBanner()
 	{
-		static const uint8_t bannerWidth = 110;
+		uint8_t bannerWidth = System::getTerminalWidth();
+		static const char BANNER_CHAR = '%';
+
+		uint32_t sideFreeSpace = bannerWidth / 10;
+		bannerWidth -= (sideFreeSpace * 2);
 
 		// First row
+		for (size_t i = 0; i < sideFreeSpace; i++)
+			std::cout << " ";
+
 		for (size_t i = 0; i < bannerWidth; i++)
-			std::cout << "-";
+			std::cout << BANNER_CHAR;
 		std::cout << "\n";
 
-		// Second row
-		std::cout << "|";
+		// Second Row
+		for (size_t i = 0; i < sideFreeSpace; i++)
+			std::cout << " ";
+
+		std::cout << BANNER_CHAR;
 
 		// minus 2 for printing "|" at start and end.
 		for (size_t i = 0; i < bannerWidth - 2; i++)
 			std::cout << " ";
 
-		std::cout << "|";
+		std::cout << BANNER_CHAR;
 		std::cout << "\n";
 
 		// Third Row
-		std::cout << "|";
+		for (size_t i = 0; i < sideFreeSpace; i++)
+			std::cout << " ";
 
+		std::cout << BANNER_CHAR;
+
+		// Third Row
+		for (size_t i = 0; i < sideFreeSpace; i++)
+			std::cout << " ";
 		// Make whitespace for styling
-		std::string thirdRowStats = "    ";
+		std::string thirdRowStats = "";
 
 		// Add the age
 		thirdRowStats += std::to_string(SceneManager::m_player.getAge());
@@ -49,7 +66,7 @@ namespace EWF {
 		thirdRowStats += SceneManager::m_player.getName();
 
 		// Add a white space of bannerwidth divided by 3, and add 8 to that only for styling, and retract whatever space the name takes up. 
-		for (size_t i = 0; i < ((bannerWidth / 3) + 8) - (SceneManager::m_player.getName().size()); i++)
+		for (size_t i = 0; i < ((bannerWidth / 3)) - (SceneManager::m_player.getName().size()); i++)
 			thirdRowStats += " ";
 
 		// If name has not been given yet, dont display health either.
@@ -61,24 +78,30 @@ namespace EWF {
 
 		std::cout << thirdRowStats;
 
-		for (size_t i = 0; i < (bannerWidth - thirdRowStats.size() - 2); i++)
+		for (size_t i = 0; i < (bannerWidth - (thirdRowStats.size() + sideFreeSpace)) - 2; i++)
 			std::cout << " ";
 
-		std::cout << "|";
+		std::cout << BANNER_CHAR;
 		std::cout << "\n";
 
 		// Fourth Row
-		std::cout << "|";
+		for (size_t i = 0; i < sideFreeSpace; i++)
+			std::cout << " ";
+
+		std::cout << BANNER_CHAR;
 
 		for (size_t i = 0; i < (bannerWidth - 2); i++)
 			std::cout << " ";
 
-		std::cout << "|";
+		std::cout << BANNER_CHAR;
 		std::cout << "\n";
 
 		// Fifth row
+		for (size_t i = 0; i < sideFreeSpace; i++)
+			std::cout << " ";
+
 		for (size_t i = 0; i < bannerWidth; i++)
-			std::cout << "-";
+			std::cout << BANNER_CHAR;
 
 		// Leave with a row of white space
 		std::cout << "\n\n";

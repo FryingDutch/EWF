@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "Axe",
-    "qty": 1,
+    "qty": 4,
     "owned": true,
     "description": "Worn by hands weathered by ancient trees, a testament to countless timbers felled."
   },
@@ -10,6 +10,20 @@
     "id": 2,
     "name": "Sharp Knife",
     "qty": 1,
+    "owned": true,
+    "description": "A lethal companion, once wielded by a hired hand now at rest."
+  },
+  {
+    "id": 3,
+    "name": "Dull Knife",
+    "qty": 1343,
+    "owned": true,
+    "description": "A lethal companion, once wielded by a hired hand now at rest."
+  },
+  {
+    "id": 4,
+    "name": "Water Bottle",
+    "qty": 113,
     "owned": true,
     "description": "A lethal companion, once wielded by a hired hand now at rest."
   }

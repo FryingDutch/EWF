@@ -2,6 +2,7 @@
 #include <json.hpp>
 #include "DataObject.h"
 #include "Optionr.h"
+#include "System/System.h"
 
 namespace EWF
 {
@@ -31,6 +32,34 @@ namespace EWF
 			this->setData(File::MESSAGE, std::string{});
 			this->setData(File::RESPONSE, std::string{});
 			this->setData(File::SCENETYPE, std::string{});
+		}
+
+		std::string formatStoryText(uint32_t _divider = 8) 
+		{
+			std::string result;
+			if (_divider <= 0)
+			{
+				_divider = 1;
+			}
+
+			for (size_t i = 0; i < System::getTerminalWidth() / _divider; i++)
+			{
+				result += " ";
+			}
+
+			for (char ch : this->getStory()) {
+				if (ch == '\n') {
+					result += "\n";
+					for (size_t i = 0; i < System::getTerminalWidth() / _divider; i++)
+					{
+						result += " ";
+					}
+				}
+				else {
+					result += ch;
+				}
+			}
+			return (result + "\n");
 		}
 
 		void setStory(std::string _story)
